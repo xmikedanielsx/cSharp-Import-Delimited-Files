@@ -433,7 +433,8 @@ namespace ImportTabDelimitedFiles
                 if(e == null) {
                     this.updateMappingForFile(cbl_fileList.SelectedIndex);
                     return;
-                } if (e.RowIndex != null || e.RowIndex != 0) {
+                } 
+                if (e.RowIndex != null || e.RowIndex != 0) {
                     int ri = e.RowIndex;
                     //MessageBox.Show(ri.ToString());
                     DataGridViewRow dgvr = dgv_FieldList.Rows[e.RowIndex];
@@ -457,6 +458,7 @@ namespace ImportTabDelimitedFiles
                         MessageBox.Show("Your Value is invalid for the data length");
                         dgvr.Cells["dtLength"].Value = "max";
                     }
+                    this.updateMappingForFile(cbl_fileList.SelectedIndex);
                 }
             
             }
