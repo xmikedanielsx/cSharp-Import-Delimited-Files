@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace ImportTabDelimitedFiles
 {
+    
     public partial class Form1 : Form
     {
 
@@ -29,6 +30,9 @@ namespace ImportTabDelimitedFiles
         {
             InitializeComponent();
             lbl_ExpandTopPanel.Visible = false;
+            cmbox_delimiter.SelectedItem = "Tab";
+            txtbox_defaultDataLength.Text = "max";
+            dgv_FieldList.Enabled = false;
         }
 
         
@@ -102,9 +106,10 @@ namespace ImportTabDelimitedFiles
             
         }
 
-        private void btn_verifyFileCount_Click(object sender, EventArgs e)
+        private void btn_loadFilesToList_Click(object sender, EventArgs e)
         {
-
+            lv_fileList.Items.Clear();
+            dgv_FieldList.Rows.Clear();
             //this.btn_testConnection_Click(sender, e);
             if (this.hasError == 1) { return; }
             if (txtbox_pickUpPath.Text.ToString() == "" || Directory.Exists(txtbox_pickUpPath.Text.ToString()) == false)
@@ -114,26 +119,44 @@ namespace ImportTabDelimitedFiles
             }
             if (this.hasError == 1) { return; }
 
+            try {
+                DirectoryInfo di = new DirectoryInfo(txtbox_pickUpPath.Text.ToString());
+                string[] extensions = new[] { ".txt", ".csv" };
 
-            DirectoryInfo di = new DirectoryInfo(txtbox_pickUpPath.Text.ToString());
-            string[] extensions = new[] { ".txt", ".csv" };
+                if (this.files != null) { Array.Clear(this.files, 0, this.files.Length); }
+                lv_fileList.Items.Clear();
+                this.files =
+                    di.EnumerateFiles()
+                         .Where(f => extensions.Contains(f.Extension.ToLower()))
+                         .ToArray();
+                
+                if (this.filesToLoad != null) { this.filesToLoad.Clear(); }
+                List<string> failedFiles = new List<string>();
+                foreach(FileInfo fl in this.files)
+                {
+                    lv_fileList.Items.Add(fl.FullName.ToString());
+                    DataTable dtfl = GetDataTableFromCSVFile(fl.FullName.ToString());
+                    if(dtfl != null) {
+                        this.filesToLoad.Add(fl.FullName.ToString(), dtfl);
+                    } else {
+                        failedFiles.Add(fl.FullName);
+                    }
+                }
+                foreach(string fi in failedFiles) {
+                    lv_fileList.FindItemWithText(fi).ForeColor = Color.Red;
+                }
 
-            if (this.files != null) { Array.Clear(this.files, 0, this.files.Length); }
-            cbl_fileList.Items.Clear();
-            this.files =
-                di.EnumerateFiles()
-                     .Where(f => extensions.Contains(f.Extension.ToLower()))
-                     .ToArray();
-            cbl_fileList.Items.AddRange(this.files);
-            if (this.filesToLoad != null) { this.filesToLoad.Clear(); }
-            foreach(FileInfo fl in this.files)
-            {
-                this.filesToLoad.Add(fl.FullName.ToString(), GetDataTableFromCSVFile(fl.FullName.ToString()));
+                this.fileListLoaded = true;
+                dgv_FieldList.Enabled = true;
+                lv_fileList.Enabled = true;
+            } catch  {
+                lv_fileList.Enabled = false;
+                dgv_FieldList.Enabled = false;
             }
-            this.fileListLoaded = true;
+           
             //foreach(FileInfo fl in files)
             //{
-            //    cbl_fileList.Items.Add(fl.Name.ToString());
+            //    lv_fileList.Items.Add(fl.Name.ToString());
             //}
             //foreach (FileInfo fl in files)
             //{
@@ -254,14 +277,36 @@ namespace ImportTabDelimitedFiles
 
         }
 
-        private static DataTable GetDataTableFromCSVFile(string csv_file_path)
+        private  DataTable GetDataTableFromCSVFile(string csv_file_path)
         {
+           
             DataTable csvData = new DataTable();
             try
             {
                 using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
                 {
-                    csvReader.SetDelimiters( "\t" );
+                    string[] dv;
+                    List<string> dl = new List<string>();
+                    switch (cmbox_delimiter.Text.ToString()) {
+                        case "Tab":
+                            dl.Add("\t");
+                            break;
+                        case "Comma":
+                            dl.Add(",");
+                            break;
+                        case "Semi-Colon":
+                            dl.Add(";");
+                            break;
+                        case "Pipe":
+                            dl.Add("|");
+                            break;
+                        default:
+                            dl.Add("\t");
+                            break;
+                    }
+                    dv = dl.ToArray();
+                    //MessageBox.Show(dv);
+                    csvReader.SetDelimiters( dv );
                     csvReader.HasFieldsEnclosedInQuotes = true;
                     string[] colFields = csvReader.ReadFields();
                     foreach (string column in colFields)
@@ -346,7 +391,7 @@ namespace ImportTabDelimitedFiles
             chbox_CreateAllTablesTable.Checked = true;
 
             // Clear lists and tables
-            cbl_fileList.Items.Clear();
+            lv_fileList.Items.Clear();
             dgv_FieldList.Rows.Clear();
             
             // Clear Other Labels
@@ -371,7 +416,10 @@ namespace ImportTabDelimitedFiles
         private void cbl_fileList_SelectedIndexChanged(object sender, EventArgs e)
         {
             dgv_FieldList.Rows.Clear();
-            FileInfo fl = this.files[cbl_fileList.SelectedIndex];
+            FileInfo fl = this.files[lv_fileList.SelectedIndex()];
+            if (!this.filesToLoad.ContainsKey(fl.FullName.ToString())) {
+                return;
+            }
             DataTable dt = this.filesToLoad[fl.FullName.ToString()];
             Dictionary<string, Dictionary<string, string>> ftm = null;
             if (this.filesToLoadMapping.ContainsKey(fl.FullName.ToString())) {
@@ -385,7 +433,7 @@ namespace ImportTabDelimitedFiles
                         col.Ordinal.ToString()
                         , col.ColumnName.ToString()
                         , "Text"
-                        , "max"
+                        , txtbox_defaultDataLength.Text.ToString()
                     );
                 }
                 this.dgv_FieldList_CellValueChanged_Call(sender, null, null);
@@ -431,25 +479,18 @@ namespace ImportTabDelimitedFiles
         {
             if (this.fileListLoaded) {
                 if(e == null) {
-                    this.updateMappingForFile(cbl_fileList.SelectedIndex);
+                    this.updateMappingForFile(lv_fileList.SelectedIndex());
                     return;
                 } 
-                if (e.RowIndex != null || e.RowIndex != 0) {
+                if ( e.RowIndex != 0) {
                     int ri = e.RowIndex;
                     //MessageBox.Show(ri.ToString());
                     DataGridViewRow dgvr = dgv_FieldList.Rows[e.RowIndex];
                     string input = dgvr.Cells["dtLength"].Value.ToString();
                     string patt1 = @"\d+";
-                    string patt2 = @"max";
-                    string patt3 = @"[a-zA-Z]+";
                     Match m1 = Regex.Match(input, patt1);
-                    Match m2 = Regex.Match(input, patt2);
-                    Match m3 = Regex.Match(input, patt3);
-                    Boolean mm1; Boolean mm2; Boolean mm3;
-                    Boolean dtValGood;
+                    Boolean mm1;
                     if (m1.Length > 0) { mm1 = true; } else { mm1 = false; }
-                    if (m2.Length > 0) { mm2 = true; } else { mm2 = false; }
-                    if (m3.Length > 0) { mm3 = true; } else { mm3 = false; }
                     if (
                             dgvr.Cells["dataType"].Value.ToString() == "Text"
                             && input.ToUpper() != "MAX"
@@ -458,7 +499,7 @@ namespace ImportTabDelimitedFiles
                         MessageBox.Show("Your Value is invalid for the data length");
                         dgvr.Cells["dtLength"].Value = "max";
                     }
-                    this.updateMappingForFile(cbl_fileList.SelectedIndex);
+                    this.updateMappingForFile(lv_fileList.SelectedIndex());
                 }
             
             }
@@ -486,6 +527,16 @@ namespace ImportTabDelimitedFiles
                 }
             }
             MessageBox.Show(opt);
+        }
+    }
+    public static class Extension
+    {
+        public static int SelectedIndex(this ListView listView)
+        {
+            if (listView.SelectedIndices.Count > 0)
+                return listView.SelectedIndices[0];
+            else
+                return 0;
         }
     }
 }

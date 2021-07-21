@@ -42,15 +42,22 @@ namespace ImportTabDelimitedFiles
             this.txtbox_sqlServer = new System.Windows.Forms.TextBox();
             this.lbl_testConnStatus = new System.Windows.Forms.Label();
             this.btn_openFileDiag = new System.Windows.Forms.Button();
-            this.btn_verifyFileCount = new System.Windows.Forms.Button();
+            this.btn_loadFilesToList = new System.Windows.Forms.Button();
             this.lbl_loadFilesStatus = new System.Windows.Forms.Label();
             this.sc_Main = new System.Windows.Forms.SplitContainer();
             this.chbox_windowsAuth = new System.Windows.Forms.CheckBox();
             this.lbl_CollapseTopPanel = new System.Windows.Forms.Label();
-            this.btn_CheckStuff = new System.Windows.Forms.Button();
+            this.txtbox_defaultDataLength = new System.Windows.Forms.TextBox();
+            this.lbl_defaultDataLength = new System.Windows.Forms.Label();
+            this.cmbox_delimiter = new System.Windows.Forms.ComboBox();
+            this.lbl_delimiterLbl = new System.Windows.Forms.Label();
             this.sc_innerContainer = new System.Windows.Forms.SplitContainer();
-            this.cbl_fileList = new System.Windows.Forms.CheckedListBox();
+            this.lv_fileList = new System.Windows.Forms.ListView();
             this.dgv_FieldList = new System.Windows.Forms.DataGridView();
+            this.index = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.fieldName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.dtLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lbl_ExpandTopPanel = new System.Windows.Forms.Label();
             this.chbox_CreateAllTablesTable = new System.Windows.Forms.CheckBox();
             this.chbox_DropTables = new System.Windows.Forms.CheckBox();
@@ -61,10 +68,6 @@ namespace ImportTabDelimitedFiles
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.index = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.fieldName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.dtLength = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
             this.sc_Main.Panel2.SuspendLayout();
@@ -91,7 +94,7 @@ namespace ImportTabDelimitedFiles
             // lbl_filePickUpPath
             // 
             this.lbl_filePickUpPath.AutoSize = true;
-            this.lbl_filePickUpPath.Location = new System.Drawing.Point(7, 22);
+            this.lbl_filePickUpPath.Location = new System.Drawing.Point(7, 45);
             this.lbl_filePickUpPath.Name = "lbl_filePickUpPath";
             this.lbl_filePickUpPath.Size = new System.Drawing.Size(141, 15);
             this.lbl_filePickUpPath.TabIndex = 20;
@@ -99,9 +102,9 @@ namespace ImportTabDelimitedFiles
             // 
             // txtbox_pickUpPath
             // 
-            this.txtbox_pickUpPath.Location = new System.Drawing.Point(153, 18);
+            this.txtbox_pickUpPath.Location = new System.Drawing.Point(153, 41);
             this.txtbox_pickUpPath.Name = "txtbox_pickUpPath";
-            this.txtbox_pickUpPath.Size = new System.Drawing.Size(800, 23);
+            this.txtbox_pickUpPath.Size = new System.Drawing.Size(526, 23);
             this.txtbox_pickUpPath.TabIndex = 19;
             // 
             // lbl_sqlDatabase
@@ -179,7 +182,7 @@ namespace ImportTabDelimitedFiles
             // 
             // btn_openFileDiag
             // 
-            this.btn_openFileDiag.Location = new System.Drawing.Point(959, 17);
+            this.btn_openFileDiag.Location = new System.Drawing.Point(685, 41);
             this.btn_openFileDiag.Name = "btn_openFileDiag";
             this.btn_openFileDiag.Size = new System.Drawing.Size(37, 24);
             this.btn_openFileDiag.TabIndex = 23;
@@ -187,19 +190,19 @@ namespace ImportTabDelimitedFiles
             this.btn_openFileDiag.UseVisualStyleBackColor = true;
             this.btn_openFileDiag.Click += new System.EventHandler(this.btn_openFileDiag_Click);
             // 
-            // btn_verifyFileCount
+            // btn_loadFilesToList
             // 
-            this.btn_verifyFileCount.Location = new System.Drawing.Point(1008, 18);
-            this.btn_verifyFileCount.Name = "btn_verifyFileCount";
-            this.btn_verifyFileCount.Size = new System.Drawing.Size(109, 23);
-            this.btn_verifyFileCount.TabIndex = 24;
-            this.btn_verifyFileCount.Text = "Load Files To List";
-            this.btn_verifyFileCount.UseVisualStyleBackColor = true;
-            this.btn_verifyFileCount.Click += new System.EventHandler(this.btn_verifyFileCount_Click);
+            this.btn_loadFilesToList.Location = new System.Drawing.Point(1066, 41);
+            this.btn_loadFilesToList.Name = "btn_loadFilesToList";
+            this.btn_loadFilesToList.Size = new System.Drawing.Size(84, 23);
+            this.btn_loadFilesToList.TabIndex = 24;
+            this.btn_loadFilesToList.Text = "Load Files";
+            this.btn_loadFilesToList.UseVisualStyleBackColor = true;
+            this.btn_loadFilesToList.Click += new System.EventHandler(this.btn_loadFilesToList_Click);
             // 
             // lbl_loadFilesStatus
             // 
-            this.lbl_loadFilesStatus.Location = new System.Drawing.Point(180, 5);
+            this.lbl_loadFilesStatus.Location = new System.Drawing.Point(382, 25);
             this.lbl_loadFilesStatus.Name = "lbl_loadFilesStatus";
             this.lbl_loadFilesStatus.Size = new System.Drawing.Size(297, 13);
             this.lbl_loadFilesStatus.TabIndex = 25;
@@ -231,10 +234,13 @@ namespace ImportTabDelimitedFiles
             // 
             // sc_Main.Panel2
             // 
-            this.sc_Main.Panel2.Controls.Add(this.btn_CheckStuff);
+            this.sc_Main.Panel2.Controls.Add(this.txtbox_defaultDataLength);
+            this.sc_Main.Panel2.Controls.Add(this.lbl_defaultDataLength);
+            this.sc_Main.Panel2.Controls.Add(this.cmbox_delimiter);
+            this.sc_Main.Panel2.Controls.Add(this.lbl_delimiterLbl);
             this.sc_Main.Panel2.Controls.Add(this.sc_innerContainer);
             this.sc_Main.Panel2.Controls.Add(this.lbl_ExpandTopPanel);
-            this.sc_Main.Panel2.Controls.Add(this.btn_verifyFileCount);
+            this.sc_Main.Panel2.Controls.Add(this.btn_loadFilesToList);
             this.sc_Main.Panel2.Controls.Add(this.lbl_loadFilesStatus);
             this.sc_Main.Panel2.Controls.Add(this.txtbox_pickUpPath);
             this.sc_Main.Panel2.Controls.Add(this.lbl_filePickUpPath);
@@ -268,15 +274,43 @@ namespace ImportTabDelimitedFiles
             this.lbl_CollapseTopPanel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lbl_CollapseTopPanel.Click += new System.EventHandler(this.lbl_CollapseTopPanel_Click);
             // 
-            // btn_CheckStuff
+            // txtbox_defaultDataLength
             // 
-            this.btn_CheckStuff.Location = new System.Drawing.Point(1133, 20);
-            this.btn_CheckStuff.Name = "btn_CheckStuff";
-            this.btn_CheckStuff.Size = new System.Drawing.Size(26, 19);
-            this.btn_CheckStuff.TabIndex = 35;
-            this.btn_CheckStuff.Text = "button1";
-            this.btn_CheckStuff.UseVisualStyleBackColor = true;
-            this.btn_CheckStuff.Click += new System.EventHandler(this.btn_CheckStuff_Click);
+            this.txtbox_defaultDataLength.Location = new System.Drawing.Point(970, 40);
+            this.txtbox_defaultDataLength.Name = "txtbox_defaultDataLength";
+            this.txtbox_defaultDataLength.Size = new System.Drawing.Size(83, 23);
+            this.txtbox_defaultDataLength.TabIndex = 35;
+            // 
+            // lbl_defaultDataLength
+            // 
+            this.lbl_defaultDataLength.AutoSize = true;
+            this.lbl_defaultDataLength.Location = new System.Drawing.Point(887, 46);
+            this.lbl_defaultDataLength.Name = "lbl_defaultDataLength";
+            this.lbl_defaultDataLength.Size = new System.Drawing.Size(85, 15);
+            this.lbl_defaultDataLength.TabIndex = 38;
+            this.lbl_defaultDataLength.Text = "Default Length";
+            // 
+            // cmbox_delimiter
+            // 
+            this.cmbox_delimiter.FormattingEnabled = true;
+            this.cmbox_delimiter.Items.AddRange(new object[] {
+            "Tab",
+            "Comma",
+            "Semi-Colon",
+            "Pipe"});
+            this.cmbox_delimiter.Location = new System.Drawing.Point(784, 41);
+            this.cmbox_delimiter.Name = "cmbox_delimiter";
+            this.cmbox_delimiter.Size = new System.Drawing.Size(97, 23);
+            this.cmbox_delimiter.TabIndex = 37;
+            // 
+            // lbl_delimiterLbl
+            // 
+            this.lbl_delimiterLbl.AutoSize = true;
+            this.lbl_delimiterLbl.Location = new System.Drawing.Point(723, 46);
+            this.lbl_delimiterLbl.Name = "lbl_delimiterLbl";
+            this.lbl_delimiterLbl.Size = new System.Drawing.Size(55, 15);
+            this.lbl_delimiterLbl.TabIndex = 36;
+            this.lbl_delimiterLbl.Text = "Delimiter";
             // 
             // sc_innerContainer
             // 
@@ -285,30 +319,32 @@ namespace ImportTabDelimitedFiles
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sc_innerContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sc_innerContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.sc_innerContainer.Location = new System.Drawing.Point(3, 56);
+            this.sc_innerContainer.Location = new System.Drawing.Point(3, 81);
             this.sc_innerContainer.Name = "sc_innerContainer";
             // 
             // sc_innerContainer.Panel1
             // 
-            this.sc_innerContainer.Panel1.Controls.Add(this.cbl_fileList);
+            this.sc_innerContainer.Panel1.Controls.Add(this.lv_fileList);
             // 
             // sc_innerContainer.Panel2
             // 
             this.sc_innerContainer.Panel2.Controls.Add(this.dgv_FieldList);
-            this.sc_innerContainer.Size = new System.Drawing.Size(1159, 547);
+            this.sc_innerContainer.Size = new System.Drawing.Size(1159, 522);
             this.sc_innerContainer.SplitterDistance = 677;
             this.sc_innerContainer.TabIndex = 34;
             // 
-            // cbl_fileList
+            // lv_fileList
             // 
-            this.cbl_fileList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbl_fileList.FormattingEnabled = true;
-            this.cbl_fileList.Location = new System.Drawing.Point(0, 0);
-            this.cbl_fileList.Margin = new System.Windows.Forms.Padding(0);
-            this.cbl_fileList.Name = "cbl_fileList";
-            this.cbl_fileList.Size = new System.Drawing.Size(675, 545);
-            this.cbl_fileList.TabIndex = 31;
-            this.cbl_fileList.SelectedIndexChanged += new System.EventHandler(this.cbl_fileList_SelectedIndexChanged);
+            this.lv_fileList.CheckBoxes = true;
+            this.lv_fileList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lv_fileList.HideSelection = false;
+            this.lv_fileList.Location = new System.Drawing.Point(0, 0);
+            this.lv_fileList.Name = "lv_fileList";
+            this.lv_fileList.Size = new System.Drawing.Size(675, 520);
+            this.lv_fileList.TabIndex = 32;
+            this.lv_fileList.UseCompatibleStateImageBehavior = false;
+            this.lv_fileList.View = System.Windows.Forms.View.List;
+            this.lv_fileList.SelectedIndexChanged += new System.EventHandler(this.cbl_fileList_SelectedIndexChanged);
             // 
             // dgv_FieldList
             // 
@@ -324,9 +360,41 @@ namespace ImportTabDelimitedFiles
             this.dgv_FieldList.Location = new System.Drawing.Point(0, 0);
             this.dgv_FieldList.Name = "dgv_FieldList";
             this.dgv_FieldList.RowTemplate.Height = 25;
-            this.dgv_FieldList.Size = new System.Drawing.Size(476, 545);
+            this.dgv_FieldList.Size = new System.Drawing.Size(476, 520);
             this.dgv_FieldList.TabIndex = 28;
             this.dgv_FieldList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_FieldList_CellValueChanged);
+            // 
+            // index
+            // 
+            this.index.HeaderText = "index";
+            this.index.Name = "index";
+            this.index.ReadOnly = true;
+            this.index.Visible = false;
+            // 
+            // fieldName
+            // 
+            this.fieldName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.fieldName.HeaderText = "Field Name";
+            this.fieldName.Name = "fieldName";
+            this.fieldName.ReadOnly = true;
+            // 
+            // dataType
+            // 
+            this.dataType.HeaderText = "Data Type";
+            this.dataType.Items.AddRange(new object[] {
+            "Text",
+            "Integer",
+            "Date",
+            "DateTime"});
+            this.dataType.Name = "dataType";
+            this.dataType.Width = 80;
+            // 
+            // dtLength
+            // 
+            this.dtLength.HeaderText = "Length";
+            this.dtLength.Name = "dtLength";
+            this.dtLength.ToolTipText = "Can be the word MAX or a number from 1-8000";
+            this.dtLength.Width = 80;
             // 
             // lbl_ExpandTopPanel
             // 
@@ -426,38 +494,6 @@ namespace ImportTabDelimitedFiles
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
             // 
-            // index
-            // 
-            this.index.HeaderText = "index";
-            this.index.Name = "index";
-            this.index.ReadOnly = true;
-            this.index.Visible = false;
-            // 
-            // fieldName
-            // 
-            this.fieldName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.fieldName.HeaderText = "Field Name";
-            this.fieldName.Name = "fieldName";
-            this.fieldName.ReadOnly = true;
-            // 
-            // dataType
-            // 
-            this.dataType.HeaderText = "Data Type";
-            this.dataType.Items.AddRange(new object[] {
-            "Text",
-            "Integer",
-            "Date",
-            "DateTime"});
-            this.dataType.Name = "dataType";
-            this.dataType.Width = 80;
-            // 
-            // dtLength
-            // 
-            this.dtLength.HeaderText = "Length";
-            this.dtLength.Name = "dtLength";
-            this.dtLength.ToolTipText = "Can be the word MAX or a number from 1-8000";
-            this.dtLength.Width = 80;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -504,7 +540,7 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.TextBox txtbox_sqlServer;
         private System.Windows.Forms.Label lbl_testConnStatus;
         private System.Windows.Forms.Button btn_openFileDiag;
-        private System.Windows.Forms.Button btn_verifyFileCount;
+        private System.Windows.Forms.Button btn_loadFilesToList;
         private System.Windows.Forms.Label lbl_loadFilesStatus;
         private System.Windows.Forms.SplitContainer sc_Main;
         private System.Windows.Forms.Label lbl_CollapseTopPanel;
@@ -513,7 +549,6 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.Label lbl_LoadToSQLStatus;
         private System.Windows.Forms.CheckBox chbox_CreateAllTablesTable;
         private System.Windows.Forms.CheckBox chbox_DropTables;
-        private System.Windows.Forms.CheckedListBox cbl_fileList;
         private System.Windows.Forms.MenuStrip ms_Main;
         private System.Windows.Forms.ToolStripMenuItem tsm_file;
         private System.Windows.Forms.ToolStripMenuItem tsmi_exit;
@@ -522,11 +557,15 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.CheckBox chbox_windowsAuth;
         private System.Windows.Forms.SplitContainer sc_innerContainer;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btn_CheckStuff;
         private System.Windows.Forms.DataGridViewTextBoxColumn index;
         private System.Windows.Forms.DataGridViewTextBoxColumn fieldName;
         private System.Windows.Forms.DataGridViewComboBoxColumn dataType;
         private System.Windows.Forms.DataGridViewTextBoxColumn dtLength;
+        private System.Windows.Forms.ComboBox cmbox_delimiter;
+        private System.Windows.Forms.Label lbl_delimiterLbl;
+        private System.Windows.Forms.Label lbl_defaultDataLength;
+        private System.Windows.Forms.TextBox txtbox_defaultDataLength;
+        private System.Windows.Forms.ListView lv_fileList;
     }
 }
 
