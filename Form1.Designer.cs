@@ -67,7 +67,7 @@ namespace ImportTabDelimitedFiles
             this.tsmi_exit = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtbox_FinalTableName = new System.Windows.Forms.TextBox();
             this.btn_loadToSQL = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
@@ -79,7 +79,6 @@ namespace ImportTabDelimitedFiles
             this.sc_innerContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_FieldList)).BeginInit();
             this.ms_Main.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_testConnection
@@ -95,17 +94,17 @@ namespace ImportTabDelimitedFiles
             // lbl_filePickUpPath
             // 
             this.lbl_filePickUpPath.AutoSize = true;
-            this.lbl_filePickUpPath.Location = new System.Drawing.Point(7, 45);
+            this.lbl_filePickUpPath.Location = new System.Drawing.Point(11, 46);
             this.lbl_filePickUpPath.Name = "lbl_filePickUpPath";
-            this.lbl_filePickUpPath.Size = new System.Drawing.Size(141, 15);
+            this.lbl_filePickUpPath.Size = new System.Drawing.Size(122, 15);
             this.lbl_filePickUpPath.TabIndex = 20;
-            this.lbl_filePickUpPath.Text = "Tab Delimited Pick Folder";
+            this.lbl_filePickUpPath.Text = "Flat File Source Folder";
             // 
             // txtbox_pickUpPath
             // 
-            this.txtbox_pickUpPath.Location = new System.Drawing.Point(153, 41);
+            this.txtbox_pickUpPath.Location = new System.Drawing.Point(139, 41);
             this.txtbox_pickUpPath.Name = "txtbox_pickUpPath";
-            this.txtbox_pickUpPath.Size = new System.Drawing.Size(526, 23);
+            this.txtbox_pickUpPath.Size = new System.Drawing.Size(497, 23);
             this.txtbox_pickUpPath.TabIndex = 19;
             // 
             // lbl_sqlDatabase
@@ -183,7 +182,7 @@ namespace ImportTabDelimitedFiles
             // 
             // btn_openFileDiag
             // 
-            this.btn_openFileDiag.Location = new System.Drawing.Point(685, 41);
+            this.btn_openFileDiag.Location = new System.Drawing.Point(642, 40);
             this.btn_openFileDiag.Name = "btn_openFileDiag";
             this.btn_openFileDiag.Size = new System.Drawing.Size(37, 24);
             this.btn_openFileDiag.TabIndex = 23;
@@ -277,7 +276,7 @@ namespace ImportTabDelimitedFiles
             // 
             // txtbox_defaultDataLength
             // 
-            this.txtbox_defaultDataLength.Location = new System.Drawing.Point(970, 40);
+            this.txtbox_defaultDataLength.Location = new System.Drawing.Point(958, 41);
             this.txtbox_defaultDataLength.Name = "txtbox_defaultDataLength";
             this.txtbox_defaultDataLength.Size = new System.Drawing.Size(83, 23);
             this.txtbox_defaultDataLength.TabIndex = 35;
@@ -285,7 +284,7 @@ namespace ImportTabDelimitedFiles
             // lbl_defaultDataLength
             // 
             this.lbl_defaultDataLength.AutoSize = true;
-            this.lbl_defaultDataLength.Location = new System.Drawing.Point(887, 46);
+            this.lbl_defaultDataLength.Location = new System.Drawing.Point(875, 47);
             this.lbl_defaultDataLength.Name = "lbl_defaultDataLength";
             this.lbl_defaultDataLength.Size = new System.Drawing.Size(85, 15);
             this.lbl_defaultDataLength.TabIndex = 38;
@@ -299,7 +298,7 @@ namespace ImportTabDelimitedFiles
             "Comma",
             "Semi-Colon",
             "Pipe"});
-            this.cmbox_delimiter.Location = new System.Drawing.Point(784, 41);
+            this.cmbox_delimiter.Location = new System.Drawing.Point(758, 41);
             this.cmbox_delimiter.Name = "cmbox_delimiter";
             this.cmbox_delimiter.Size = new System.Drawing.Size(97, 23);
             this.cmbox_delimiter.TabIndex = 37;
@@ -307,7 +306,7 @@ namespace ImportTabDelimitedFiles
             // lbl_delimiterLbl
             // 
             this.lbl_delimiterLbl.AutoSize = true;
-            this.lbl_delimiterLbl.Location = new System.Drawing.Point(723, 46);
+            this.lbl_delimiterLbl.Location = new System.Drawing.Point(697, 46);
             this.lbl_delimiterLbl.Name = "lbl_delimiterLbl";
             this.lbl_delimiterLbl.Size = new System.Drawing.Size(55, 15);
             this.lbl_delimiterLbl.TabIndex = 36;
@@ -415,17 +414,18 @@ namespace ImportTabDelimitedFiles
             this.chbox_CreateAllTablesTable.AutoSize = true;
             this.chbox_CreateAllTablesTable.Checked = true;
             this.chbox_CreateAllTablesTable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chbox_CreateAllTablesTable.Location = new System.Drawing.Point(149, 21);
+            this.chbox_CreateAllTablesTable.Location = new System.Drawing.Point(149, 722);
             this.chbox_CreateAllTablesTable.Name = "chbox_CreateAllTablesTable";
             this.chbox_CreateAllTablesTable.Size = new System.Drawing.Size(205, 19);
             this.chbox_CreateAllTablesTable.TabIndex = 33;
             this.chbox_CreateAllTablesTable.Text = "Create A Table With All Table Data";
             this.chbox_CreateAllTablesTable.UseVisualStyleBackColor = true;
+            this.chbox_CreateAllTablesTable.CheckStateChanged += new System.EventHandler(this.chbox_CreateAllTablesTable_CheckedChanged);
             // 
             // chbox_DropTables
             // 
             this.chbox_DropTables.AutoSize = true;
-            this.chbox_DropTables.Location = new System.Drawing.Point(19, 21);
+            this.chbox_DropTables.Location = new System.Drawing.Point(19, 722);
             this.chbox_DropTables.Name = "chbox_DropTables";
             this.chbox_DropTables.Size = new System.Drawing.Size(124, 19);
             this.chbox_DropTables.TabIndex = 32;
@@ -434,9 +434,9 @@ namespace ImportTabDelimitedFiles
             // 
             // lbl_LoadToSQLStatus
             // 
-            this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(358, 18);
+            this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(620, 719);
             this.lbl_LoadToSQLStatus.Name = "lbl_LoadToSQLStatus";
-            this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(684, 22);
+            this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(422, 22);
             this.lbl_LoadToSQLStatus.TabIndex = 30;
             this.lbl_LoadToSQLStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -482,23 +482,16 @@ namespace ImportTabDelimitedFiles
             this.tsmi_clearData.Text = "Clear All Data";
             this.tsmi_clearData.Click += new System.EventHandler(this.tsm_clearData_Click);
             // 
-            // groupBox1
+            // txtbox_FinalTableName
             // 
-            this.groupBox1.AutoSize = true;
-            this.groupBox1.Controls.Add(this.btn_loadToSQL);
-            this.groupBox1.Controls.Add(this.chbox_DropTables);
-            this.groupBox1.Controls.Add(this.lbl_LoadToSQLStatus);
-            this.groupBox1.Controls.Add(this.chbox_CreateAllTablesTable);
-            this.groupBox1.Location = new System.Drawing.Point(12, 705);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1162, 63);
-            this.groupBox1.TabIndex = 34;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Options";
+            this.txtbox_FinalTableName.Location = new System.Drawing.Point(360, 720);
+            this.txtbox_FinalTableName.Name = "txtbox_FinalTableName";
+            this.txtbox_FinalTableName.Size = new System.Drawing.Size(254, 23);
+            this.txtbox_FinalTableName.TabIndex = 34;
             // 
             // btn_loadToSQL
             // 
-            this.btn_loadToSQL.Location = new System.Drawing.Point(1065, 18);
+            this.btn_loadToSQL.Location = new System.Drawing.Point(1098, 718);
             this.btn_loadToSQL.Name = "btn_loadToSQL";
             this.btn_loadToSQL.Size = new System.Drawing.Size(75, 23);
             this.btn_loadToSQL.TabIndex = 33;
@@ -510,13 +503,17 @@ namespace ImportTabDelimitedFiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1189, 768);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(1189, 767);
+            this.Controls.Add(this.btn_loadToSQL);
+            this.Controls.Add(this.txtbox_FinalTableName);
+            this.Controls.Add(this.lbl_LoadToSQLStatus);
             this.Controls.Add(this.sc_Main);
+            this.Controls.Add(this.chbox_DropTables);
+            this.Controls.Add(this.chbox_CreateAllTablesTable);
             this.Controls.Add(this.ms_Main);
             this.MainMenuStrip = this.ms_Main;
             this.Name = "Form1";
-            this.Text = "Import Tab Delimited Stuff";
+            this.Text = "Import Flat Files in Bulk";
             this.sc_Main.Panel1.ResumeLayout(false);
             this.sc_Main.Panel1.PerformLayout();
             this.sc_Main.Panel2.ResumeLayout(false);
@@ -530,8 +527,6 @@ namespace ImportTabDelimitedFiles
             ((System.ComponentModel.ISupportInitialize)(this.dgv_FieldList)).EndInit();
             this.ms_Main.ResumeLayout(false);
             this.ms_Main.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -568,7 +563,6 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.ToolStripMenuItem tsmi_clearData;
         private System.Windows.Forms.CheckBox chbox_windowsAuth;
         private System.Windows.Forms.SplitContainer sc_innerContainer;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridViewTextBoxColumn index;
         private System.Windows.Forms.DataGridViewTextBoxColumn fieldName;
         private System.Windows.Forms.DataGridViewComboBoxColumn dataType;
@@ -579,6 +573,7 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.TextBox txtbox_defaultDataLength;
         private System.Windows.Forms.ListView lv_fileList;
         private System.Windows.Forms.Button btn_loadToSQL;
+        private System.Windows.Forms.TextBox txtbox_FinalTableName;
     }
 }
 

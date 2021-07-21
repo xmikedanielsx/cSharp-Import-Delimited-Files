@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.IO;
 using Microsoft.VisualBasic.FileIO;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 
 namespace ImportTabDelimitedFiles
 {
@@ -25,6 +26,7 @@ namespace ImportTabDelimitedFiles
         Dictionary<string, DataTable> filesToLoad = new Dictionary<string, DataTable>();
         Dictionary<string, Dictionary<string, Dictionary<string,string>>> filesToLoadMapping = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
         Boolean fileListLoaded = false;
+        LocalConfig lconfig;
 
         public Form1()
         {
@@ -33,8 +35,18 @@ namespace ImportTabDelimitedFiles
             cmbox_delimiter.SelectedItem = "Tab";
             txtbox_defaultDataLength.Text = "max";
             dgv_FieldList.Enabled = false;
+            this.setJsonObjectConfig();
         }
 
+        private void setJsonObjectConfig()
+        {
+            var enviroment = System.Environment.CurrentDirectory;
+            if (File.Exists(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json")) {
+                this.lconfig = JsonSerializer.Deserialize<LocalConfig>(File.ReadAllText(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"));
+            }
+            txtbox_FinalTableName.Text = this.lconfig.tableName.ToString();
+            
+        }
         
 
         private void btn_testConnection_Click(object sender, EventArgs e)
@@ -161,7 +173,9 @@ namespace ImportTabDelimitedFiles
         // TODO: Need to add more validation
         private void loadTablesToSQLServer()
         {
-            
+            if(txtbox_FinalTableName.Text.Trim() == "" && chbox_CreateAllTablesTable.Checked == true) {
+                MessageBox.Show("Sorry you have chosen to create an all tables and left the final table name blank. Please fill something in.");
+            }
             foreach (System.Collections.Generic.KeyValuePair<string, DataTable> fl in this.filesToLoad) {
                 string fname = fl.Key.ToString().Replace(".txt", "").Replace(".csv", "");
                 //csvPairMatch.Add(fl.Name.ToString(), fname);
@@ -175,6 +189,14 @@ namespace ImportTabDelimitedFiles
 
 
                     dtToLoad = fl.Value;
+                    if(chbox_DropTables.Checked == true) {
+                        string dropTable = "if exists(select 1 FROM sys.tables where name = '" + tNameToInsert + "') BEGIN DROP TABLE [" + tNameToInsert + "]; END";
+                        SqlCommand cmdDT = new SqlCommand(dropTable, this.cnn);
+                        cmdDT.Connection.Open(); cmdDT.ExecuteNonQuery(); cmdDT.Connection.Close();
+                        cmdDT.Dispose();
+                    }
+                    
+
                     string createTable = "CREATE TABLE [" + tNameToInsert + "] (";
                     Dictionary<string, Dictionary<string,string>> fd = this.filesToLoadMapping[fi.FullName.ToString()];
                     
@@ -533,6 +555,15 @@ namespace ImportTabDelimitedFiles
         {
             this.loadTablesToSQLServer();
         }
+
+        private void chbox_CreateAllTablesTable_CheckedChanged(object sender, EventArgs e)
+        {
+            if(this.chbox_CreateAllTablesTable.Checked == true) {
+                txtbox_FinalTableName.Visible = true;
+            } else {
+                txtbox_FinalTableName.Visible = false;
+            }
+        }
     }
     public static class Extension
     {
@@ -543,5 +574,10 @@ namespace ImportTabDelimitedFiles
             else
                 return 0;
         }
+    }
+
+    public class LocalConfig
+    {
+        public string tableName { get; set; }
     }
 }
