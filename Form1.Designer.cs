@@ -47,6 +47,7 @@ namespace ImportTabDelimitedFiles
             this.sc_Main = new System.Windows.Forms.SplitContainer();
             this.chbox_windowsAuth = new System.Windows.Forms.CheckBox();
             this.lbl_CollapseTopPanel = new System.Windows.Forms.Label();
+            this.btn_CheckStuff = new System.Windows.Forms.Button();
             this.sc_innerContainer = new System.Windows.Forms.SplitContainer();
             this.cbl_fileList = new System.Windows.Forms.CheckedListBox();
             this.dgv_FieldList = new System.Windows.Forms.DataGridView();
@@ -92,7 +93,7 @@ namespace ImportTabDelimitedFiles
             this.lbl_filePickUpPath.AutoSize = true;
             this.lbl_filePickUpPath.Location = new System.Drawing.Point(7, 22);
             this.lbl_filePickUpPath.Name = "lbl_filePickUpPath";
-            this.lbl_filePickUpPath.Size = new System.Drawing.Size(140, 15);
+            this.lbl_filePickUpPath.Size = new System.Drawing.Size(141, 15);
             this.lbl_filePickUpPath.TabIndex = 20;
             this.lbl_filePickUpPath.Text = "Tab Delimited Pick Folder";
             // 
@@ -230,6 +231,7 @@ namespace ImportTabDelimitedFiles
             // 
             // sc_Main.Panel2
             // 
+            this.sc_Main.Panel2.Controls.Add(this.btn_CheckStuff);
             this.sc_Main.Panel2.Controls.Add(this.sc_innerContainer);
             this.sc_Main.Panel2.Controls.Add(this.lbl_ExpandTopPanel);
             this.sc_Main.Panel2.Controls.Add(this.btn_verifyFileCount);
@@ -266,6 +268,16 @@ namespace ImportTabDelimitedFiles
             this.lbl_CollapseTopPanel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lbl_CollapseTopPanel.Click += new System.EventHandler(this.lbl_CollapseTopPanel_Click);
             // 
+            // btn_CheckStuff
+            // 
+            this.btn_CheckStuff.Location = new System.Drawing.Point(1133, 20);
+            this.btn_CheckStuff.Name = "btn_CheckStuff";
+            this.btn_CheckStuff.Size = new System.Drawing.Size(26, 19);
+            this.btn_CheckStuff.TabIndex = 35;
+            this.btn_CheckStuff.Text = "button1";
+            this.btn_CheckStuff.UseVisualStyleBackColor = true;
+            this.btn_CheckStuff.Click += new System.EventHandler(this.btn_CheckStuff_Click);
+            // 
             // sc_innerContainer
             // 
             this.sc_innerContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -300,6 +312,8 @@ namespace ImportTabDelimitedFiles
             // 
             // dgv_FieldList
             // 
+            this.dgv_FieldList.AllowUserToAddRows = false;
+            this.dgv_FieldList.AllowUserToDeleteRows = false;
             this.dgv_FieldList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_FieldList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.index,
@@ -312,6 +326,7 @@ namespace ImportTabDelimitedFiles
             this.dgv_FieldList.RowTemplate.Height = 25;
             this.dgv_FieldList.Size = new System.Drawing.Size(476, 545);
             this.dgv_FieldList.TabIndex = 28;
+            this.dgv_FieldList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_FieldList_CellValueChanged);
             // 
             // lbl_ExpandTopPanel
             // 
@@ -333,7 +348,7 @@ namespace ImportTabDelimitedFiles
             this.chbox_CreateAllTablesTable.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chbox_CreateAllTablesTable.Location = new System.Drawing.Point(149, 21);
             this.chbox_CreateAllTablesTable.Name = "chbox_CreateAllTablesTable";
-            this.chbox_CreateAllTablesTable.Size = new System.Drawing.Size(203, 19);
+            this.chbox_CreateAllTablesTable.Size = new System.Drawing.Size(205, 19);
             this.chbox_CreateAllTablesTable.TabIndex = 33;
             this.chbox_CreateAllTablesTable.Text = "Create A Table With All Table Data";
             this.chbox_CreateAllTablesTable.UseVisualStyleBackColor = true;
@@ -379,7 +394,7 @@ namespace ImportTabDelimitedFiles
             // tsmi_exit
             // 
             this.tsmi_exit.Name = "tsmi_exit";
-            this.tsmi_exit.Size = new System.Drawing.Size(93, 22);
+            this.tsmi_exit.Size = new System.Drawing.Size(92, 22);
             this.tsmi_exit.Text = "Exit";
             this.tsmi_exit.Click += new System.EventHandler(this.tsm_exit_Click);
             // 
@@ -388,7 +403,7 @@ namespace ImportTabDelimitedFiles
             this.tsmi_tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmi_clearData});
             this.tsmi_tools.Name = "tsmi_tools";
-            this.tsmi_tools.Size = new System.Drawing.Size(46, 20);
+            this.tsmi_tools.Size = new System.Drawing.Size(47, 20);
             this.tsmi_tools.Text = "Tools";
             // 
             // tsmi_clearData
@@ -440,6 +455,7 @@ namespace ImportTabDelimitedFiles
             // 
             this.dtLength.HeaderText = "Length";
             this.dtLength.Name = "dtLength";
+            this.dtLength.ToolTipText = "Can be the word MAX or a number from 1-8000";
             this.dtLength.Width = 80;
             // 
             // Form1
@@ -506,6 +522,7 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.CheckBox chbox_windowsAuth;
         private System.Windows.Forms.SplitContainer sc_innerContainer;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btn_CheckStuff;
         private System.Windows.Forms.DataGridViewTextBoxColumn index;
         private System.Windows.Forms.DataGridViewTextBoxColumn fieldName;
         private System.Windows.Forms.DataGridViewComboBoxColumn dataType;

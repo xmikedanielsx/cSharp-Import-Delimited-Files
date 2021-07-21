@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
 using Microsoft.VisualBasic.FileIO;
+using System.Text.RegularExpressions;
 
 namespace ImportTabDelimitedFiles
 {
@@ -21,6 +22,8 @@ namespace ImportTabDelimitedFiles
         int hasError = 0;
         FileInfo[] files;
         Dictionary<string, DataTable> filesToLoad = new Dictionary<string, DataTable>();
+        Dictionary<string, Dictionary<string, Dictionary<string,string>>> filesToLoadMapping = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
+        Boolean fileListLoaded = false;
 
         public Form1()
         {
@@ -37,6 +40,7 @@ namespace ImportTabDelimitedFiles
             string sqlUser;
             string sqlPass;
             string sqlDatabase;
+            
             // set sql variables
             sqlServer = txtbox_sqlServer.Text.ToString(); sqlUser = txtbox_sqlUser.Text.ToString(); sqlPass = txtbox_sqlPass.Text.ToString(); sqlDatabase = txtbox_sqlDatabase.Text.ToString();
 
@@ -126,7 +130,7 @@ namespace ImportTabDelimitedFiles
             {
                 this.filesToLoad.Add(fl.FullName.ToString(), GetDataTableFromCSVFile(fl.FullName.ToString()));
             }
-
+            this.fileListLoaded = true;
             //foreach(FileInfo fl in files)
             //{
             //    cbl_fileList.Items.Add(fl.Name.ToString());
@@ -369,21 +373,117 @@ namespace ImportTabDelimitedFiles
             dgv_FieldList.Rows.Clear();
             FileInfo fl = this.files[cbl_fileList.SelectedIndex];
             DataTable dt = this.filesToLoad[fl.FullName.ToString()];
-            foreach(DataColumn col in dt.Columns)
-            {
-                dgv_FieldList.Rows.Add(
-                    col.Ordinal.ToString()
-                    ,col.ColumnName.ToString()
-                    ,"Text"
-                    ,"max"
-                );
+            Dictionary<string, Dictionary<string, string>> ftm = null;
+            if (this.filesToLoadMapping.ContainsKey(fl.FullName.ToString())) {
+                ftm = this.filesToLoadMapping[fl.FullName.ToString()];
+            }
+
+            if (ftm == null) {
+                // Mapping Doesn't exist prefil will generic mapping
+                foreach (DataColumn col in dt.Columns) {
+                    dgv_FieldList.Rows.Add(
+                        col.Ordinal.ToString()
+                        , col.ColumnName.ToString()
+                        , "Text"
+                        , "max"
+                    );
+                }
+                this.dgv_FieldList_CellValueChanged_Call(sender, null, null);
+            }
+            else {
+                // Mapping Does Exist. Get Mapping and prefill with mapping
+                foreach (System.Collections.Generic.KeyValuePair<string, Dictionary<string, string>> em in ftm) {
+                    dgv_FieldList.Rows.Add(
+                        em.Value["Ordinal"].ToString()
+                        , em.Value["fieldName"].ToString()
+                        , em.Value["dataType"]
+                        , em.Value["dtLength"]
+                    );
+                }
+            }
+
+        }
+
+        private void dgv_FieldList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            this.dgv_FieldList_CellValueChanged_Call(sender, e, null);
+        }
+        private void updateMappingForFile (int idx)
+        {
+            if (this.files != null) {
+                FileInfo fl = this.files[idx];
+                this.filesToLoadMapping.Remove(fl.FullName.ToString());
+                Dictionary<string, Dictionary<string, string>> ml = new Dictionary<string, Dictionary<string, string>>();
+                foreach (DataGridViewRow r in dgv_FieldList.Rows) {
+                    Dictionary<string, string> dmr = new Dictionary<string, string>();
+
+                    dmr.Add("Ordinal", r.Cells["index"].Value.ToString());
+                    dmr.Add("fieldName", r.Cells["fieldName"].Value.ToString());
+                    dmr.Add("dataType", r.Cells["dataType"].Value.ToString());
+                    dmr.Add("dtLength", r.Cells["dtLength"].Value.ToString());
+                    ml.Add(r.Cells["index"].Value.ToString(), dmr);
+                }
+                this.filesToLoadMapping.Add(fl.FullName.ToString(), ml);
+
+            }
+        }
+        private void dgv_FieldList_CellValueChanged_Call (object sender, DataGridViewCellEventArgs e, string row) 
+        {
+            if (this.fileListLoaded) {
+                if(e == null) {
+                    this.updateMappingForFile(cbl_fileList.SelectedIndex);
+                    return;
+                } if (e.RowIndex != null || e.RowIndex != 0) {
+                    int ri = e.RowIndex;
+                    //MessageBox.Show(ri.ToString());
+                    DataGridViewRow dgvr = dgv_FieldList.Rows[e.RowIndex];
+                    string input = dgvr.Cells["dtLength"].Value.ToString();
+                    string patt1 = @"\d+";
+                    string patt2 = @"max";
+                    string patt3 = @"[a-zA-Z]+";
+                    Match m1 = Regex.Match(input, patt1);
+                    Match m2 = Regex.Match(input, patt2);
+                    Match m3 = Regex.Match(input, patt3);
+                    Boolean mm1; Boolean mm2; Boolean mm3;
+                    Boolean dtValGood;
+                    if (m1.Length > 0) { mm1 = true; } else { mm1 = false; }
+                    if (m2.Length > 0) { mm2 = true; } else { mm2 = false; }
+                    if (m3.Length > 0) { mm3 = true; } else { mm3 = false; }
+                    if (
+                            dgvr.Cells["dataType"].Value.ToString() == "Text"
+                            && input.ToUpper() != "MAX"
+                            && !mm1
+                        ) {
+                        MessageBox.Show("Your Value is invalid for the data length");
+                        dgvr.Cells["dtLength"].Value = "max";
+                    }
+                }
+            
             }
             
 
 
 
+            
+            
+        }
 
+   
 
+        private void btn_CheckStuff_Click(object sender, EventArgs e)
+        {
+            string opt = "";
+            foreach(System.Collections.Generic.KeyValuePair<string, System.Data.DataTable> fl in this.filesToLoad) {
+                opt += fl.Key.ToString() + "\n";
+                 Dictionary<string, Dictionary<string,string>> fm = this.filesToLoadMapping[fl.Key.ToString()];
+                foreach(System.Collections.Generic.KeyValuePair<string, Dictionary<string,string>> fmr in fm) {
+                    foreach(System.Collections.Generic.KeyValuePair<string,string> fmrv in fmr.Value) {
+                        opt += fmrv.Key.ToString() + " >>> " + fmrv.Value.ToString() + "\n";
+                    }
+                    
+                }
+            }
+            MessageBox.Show(opt);
         }
     }
 }
