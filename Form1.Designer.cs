@@ -68,6 +68,7 @@ namespace ImportTabDelimitedFiles
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btn_loadToSQL = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
             this.sc_Main.Panel2.SuspendLayout();
@@ -484,15 +485,26 @@ namespace ImportTabDelimitedFiles
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.btn_loadToSQL);
             this.groupBox1.Controls.Add(this.chbox_DropTables);
             this.groupBox1.Controls.Add(this.lbl_LoadToSQLStatus);
             this.groupBox1.Controls.Add(this.chbox_CreateAllTablesTable);
             this.groupBox1.Location = new System.Drawing.Point(12, 705);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1162, 62);
+            this.groupBox1.Size = new System.Drawing.Size(1162, 63);
             this.groupBox1.TabIndex = 34;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
+            // 
+            // btn_loadToSQL
+            // 
+            this.btn_loadToSQL.Location = new System.Drawing.Point(1065, 18);
+            this.btn_loadToSQL.Name = "btn_loadToSQL";
+            this.btn_loadToSQL.Size = new System.Drawing.Size(75, 23);
+            this.btn_loadToSQL.TabIndex = 33;
+            this.btn_loadToSQL.Text = "Load To SQL";
+            this.btn_loadToSQL.UseVisualStyleBackColor = true;
+            this.btn_loadToSQL.Click += new System.EventHandler(this.btn_loadToSQL_Click);
             // 
             // Form1
             // 
@@ -566,6 +578,7 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.Label lbl_defaultDataLength;
         private System.Windows.Forms.TextBox txtbox_defaultDataLength;
         private System.Windows.Forms.ListView lv_fileList;
+        private System.Windows.Forms.Button btn_loadToSQL;
     }
 }
 

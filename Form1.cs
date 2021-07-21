@@ -154,129 +154,129 @@ namespace ImportTabDelimitedFiles
                 dgv_FieldList.Enabled = false;
             }
            
-            //foreach(FileInfo fl in files)
-            //{
-            //    lv_fileList.Items.Add(fl.Name.ToString());
-            //}
-            //foreach (FileInfo fl in files)
-            //{
-            //    string fname = fl.Name.ToString().Replace(".txt", "").Replace(".csv", "");
-            //    //csvPairMatch.Add(fl.Name.ToString(), fname);
-            //    //listbox_OriginalTablesWithCSVs.Items.Add("New Table To Create: [SR" + txtbox_lot_SRNumber.Text.ToString() + "_"+fname+"]");
-            //    lbl_loadFilesStatus.ForeColor = Color.Black;
-            //    lbl_loadFilesStatus.Text = "Loading your files...";
-            //    try
-            //    {
-            //        DataTable dtToLoad;
-            //        string tNameToInsert = fl.Name.ToString().Replace(".txt", "").Replace(".csv", "");
-                   
-
-            //        dtToLoad = GetDataTabletFromCSVFile(fl.FullName.ToString());
-            //        string createTable = "CREATE TABLE [" + tNameToInsert + "] (";
-
-            //        int cLength = dtToLoad.Columns.Count;
-            //        for (int i = 0; i < cLength; i++)
-            //        {
-            //            if (i == cLength - 1)
-            //            {
-            //                createTable += "[" + dtToLoad.Columns[i].ToString() + "] varchar(MAX)";
-            //            }
-            //            else
-            //            {
-            //                createTable += "[" + dtToLoad.Columns[i].ToString() + "]  varchar(MAX),";
-            //            }
-            //        }
-            //        createTable += ") ";
-            //        System.Diagnostics.Debug.WriteLine(createTable);
-            //        SqlCommand cmd2 = new SqlCommand(createTable, this.cnn);
-            //        cmd2.Connection.Open(); cmd2.ExecuteNonQuery(); cmd2.Connection.Close();
-            //        cmd2.Dispose();
-
-            //        this.cnn.Open();
-            //        using (SqlBulkCopy s = new SqlBulkCopy(cnn))
-            //        {
-            //            string abc = "dbo.[" + tNameToInsert + "]";
-            //            s.DestinationTableName = abc;
-            //            s.BulkCopyTimeout = 0;
-            //            s.WriteToServer(dtToLoad);
-            //        }
-            //        this.cnn.Close();
-            //        lbl_loadFilesStatus.ForeColor = Color.Green;
-            //        lbl_loadFilesStatus.Text = "Your files have been loaded";
-
-
-            //        //InsertDataIntoSQLServerUsingSQLBulkCopy(dtToLoad, tToInsert, cnn);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        MessageBox.Show(ex.Message.ToString());
-            //        cnn.Close();
-            //        lbl_loadFilesStatus.ForeColor = Color.Red;
-            //        lbl_loadFilesStatus.Text = ex.Message;
-            //    }
-
-            //}
-
-            //// SETUP Scripts So that SQL Can be updated for union table and used to create Union Table
-            //try
-            //{
-
-            //    cnn.Open();
-            //    var enviroment = System.Environment.CurrentDirectory;
-            //    string currentLocationOfExe = Directory.GetParent(enviroment).Parent.FullName;
-
-            //    string script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll","") + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
-            //    SqlCommand cmScripts = new SqlCommand(script, cnn);
-            //    cmScripts.ExecuteNonQuery();
-            //    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\OriginalTableList.sql");
-            //    cmScripts.CommandText = script;
-            //    cmScripts.ExecuteNonQuery();
-            //    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\get_originalUnion.sql");
-            //    cmScripts.CommandText = script;
-            //    cmScripts.ExecuteNonQuery();
-            //    cnn.Close();
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message.ToString());
-            //    cnn.Close();
-            //    return;
-            //}
-
             
-            //string qToUnion = @"
-            //    DECLARE @tvalues OriginalTableList
-            //    INSERT INTO @tvalues VALUES ";
-            //int itemsAddedCount = files.Count();
-            //int itemsAddedCounter = 1;
-            //foreach (FileInfo fl in files)
-            //{
-            //    if (itemsAddedCounter != itemsAddedCount)
-            //    {
-            //        qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"'), ";
-            //    }
-            //    else
-            //    {
-            //        qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"') ";
-            //    }
-            //    itemsAddedCounter++;
-            //}
-            //qToUnion += Environment.NewLine;
-            //string nTName = @"AllFilesTable";
-            //qToUnion += @"EXEC dbo.get_OriginalUnion @tvalues, '" + nTName + "'";
-
-            //SqlCommand cmd3 = new SqlCommand(qToUnion, cnn);
-            //cmd3.Connection.Open(); cmd3.ExecuteNonQuery(); cmd3.Connection.Close();
-            //cmd3.Dispose();
-            //string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo.AllFilesTable.OriginalTable', 'OriginalFile', 'COLUMN'; ";
-            //SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
-            //cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
-            //cmd4.Dispose();
-
-            //MessageBox.Show(@"You Now Have A New Table " + Environment.NewLine + nTName);
 
         }
+        // TODO: Need to add Checks for Drop Table and for Create Unioned Table
+        // TODO: Need to add more validation
+        private void loadTablesToSQLServer()
+        {
+            
+            foreach (System.Collections.Generic.KeyValuePair<string, DataTable> fl in this.filesToLoad) {
+                string fname = fl.Key.ToString().Replace(".txt", "").Replace(".csv", "");
+                //csvPairMatch.Add(fl.Name.ToString(), fname);
+                //listbox_OriginalTablesWithCSVs.Items.Add("New Table To Create: [SR" + txtbox_lot_SRNumber.Text.ToString() + "_"+fname+"]");
+                lbl_loadFilesStatus.ForeColor = Color.Black;
+                lbl_loadFilesStatus.Text = "Loading your files...";
+                try {
+                    DataTable dtToLoad;
+                    FileInfo fi = new FileInfo(fl.Key.ToString());
+                    string tNameToInsert = fi.Name.ToString().Replace(".txt", "").Replace(".csv", "");
 
+
+                    dtToLoad = fl.Value;
+                    string createTable = "CREATE TABLE [" + tNameToInsert + "] (";
+                    Dictionary<string, Dictionary<string,string>> fd = this.filesToLoadMapping[fi.FullName.ToString()];
+                    
+                    int cLength = dtToLoad.Columns.Count;
+                    for (int i = 0; i < cLength; i++) {
+                        Dictionary<string, string> dd = fd[dtToLoad.Columns[i].Ordinal.ToString()];
+                        string dtstr = dd["dataType"].ToString() == "Text" ? "varchar" : dd["dataType"].ToString();
+                        if(dd["dataType"].ToString() == "Text") {
+                            dtstr += "(" + dd["dtLength"].ToString() + ")";
+                        }
+                        //this.filesToLoadMapping[dtToLoad.Columns[i].ToString()]
+
+                        if (i == cLength - 1) {
+                            createTable += "[" + dtToLoad.Columns[i].ToString() + "] " + dtstr;
+                        }
+                        else {
+                            createTable += "[" + dtToLoad.Columns[i].ToString() + "]  " + dtstr + ",";
+                        }
+                    }
+                    createTable += ") ";
+                    System.Diagnostics.Debug.WriteLine(createTable);
+                    SqlCommand cmd2 = new SqlCommand(createTable, this.cnn);
+                    cmd2.Connection.Open(); cmd2.ExecuteNonQuery(); cmd2.Connection.Close();
+                    cmd2.Dispose();
+
+                    this.cnn.Open();
+                    using (SqlBulkCopy s = new SqlBulkCopy(cnn)) {
+                        string abc = "dbo.[" + tNameToInsert + "]";
+                        s.DestinationTableName = abc;
+                        s.BulkCopyTimeout = 0;
+                        s.WriteToServer(dtToLoad);
+                    }
+                    this.cnn.Close();
+                    lbl_loadFilesStatus.ForeColor = Color.Green;
+                    lbl_loadFilesStatus.Text = "Your files have been loaded";
+
+
+                    //InsertDataIntoSQLServerUsingSQLBulkCopy(dtToLoad, tToInsert, cnn);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message.ToString());
+                    cnn.Close();
+                    lbl_loadFilesStatus.ForeColor = Color.Red;
+                    lbl_loadFilesStatus.Text = ex.Message;
+                }
+
+            }
+
+            // SETUP Scripts So that SQL Can be updated for union table and used to create Union Table
+            try {
+
+                cnn.Open();
+                var enviroment = System.Environment.CurrentDirectory;
+                string currentLocationOfExe = Directory.GetParent(enviroment).Parent.FullName;
+
+                string script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
+                SqlCommand cmScripts = new SqlCommand(script, cnn);
+                cmScripts.ExecuteNonQuery();
+                script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\OriginalTableList.sql");
+                cmScripts.CommandText = script;
+                cmScripts.ExecuteNonQuery();
+                script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\get_originalUnion.sql");
+                cmScripts.CommandText = script;
+                cmScripts.ExecuteNonQuery();
+                cnn.Close();
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message.ToString());
+                cnn.Close();
+                return;
+            }
+
+
+            string qToUnion = @"
+                DECLARE @tvalues OriginalTableList
+                INSERT INTO @tvalues VALUES ";
+            int itemsAddedCount = files.Count();
+            int itemsAddedCounter = 1;
+            foreach (FileInfo fl in files) {
+                if (itemsAddedCounter != itemsAddedCount) {
+                    qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"'), ";
+                }
+                else {
+                    qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"') ";
+                }
+                itemsAddedCounter++;
+            }
+            qToUnion += Environment.NewLine;
+            string nTName = @"AllFilesTable";
+            qToUnion += @"EXEC dbo.get_OriginalUnion @tvalues, '" + nTName + "'";
+
+            SqlCommand cmd3 = new SqlCommand(qToUnion, cnn);
+            cmd3.Connection.Open(); cmd3.ExecuteNonQuery(); cmd3.Connection.Close();
+            cmd3.Dispose();
+            string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo.AllFilesTable.OriginalTable', 'OriginalFile', 'COLUMN'; ";
+            SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
+            cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
+            cmd4.Dispose();
+
+            MessageBox.Show(@"You Now Have A New Table " + Environment.NewLine + nTName);
+        }
+        
         private  DataTable GetDataTableFromCSVFile(string csv_file_path)
         {
            
@@ -527,6 +527,11 @@ namespace ImportTabDelimitedFiles
                 }
             }
             MessageBox.Show(opt);
+        }
+
+        private void btn_loadToSQL_Click(object sender, EventArgs e)
+        {
+            this.loadTablesToSQLServer();
         }
     }
     public static class Extension
