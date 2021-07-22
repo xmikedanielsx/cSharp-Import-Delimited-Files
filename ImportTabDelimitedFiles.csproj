@@ -4,6 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Authors>Michael Daniels</Authors>
+    <Company>Personal Projects</Company>
+    <Product>Bulk Import Flat Files to MSSQL</Product>
+    <Description>Aishwarya Maddimsetty</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
