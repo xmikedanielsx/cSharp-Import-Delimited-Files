@@ -103,10 +103,41 @@ namespace ImportTabDelimitedFiles
             try {
                 lbl_fileLoadStatus.Text = "Writing file " + fname;
                 lbl_fileLoadStatus.Refresh();
+                //var builder = new StringBuilder();
+                //foreach (DataRow row in dtDataTable.Rows) {
+                //    builder.AppendLine(String.Join("\t", row.ItemArray));
+                //}
+                //File.WriteAllText(strFilePath, builder.ToString());
                 var builder = new StringBuilder();
+                int colCnt = 0;
+                foreach(DataColumn dc in dtDataTable.Columns) {
+                    //builder.Append("\"");
+                    builder.Append(dc.ColumnName.ToString().Replace("\"",""));
+                    //builder.Append("\"");
+                    if (colCnt != (dtDataTable.Columns.Count-1)) {
+                        builder.Append("\t");
+                    }
+                    colCnt++;
+                }
+                builder.Append(Environment.NewLine);
+
                 foreach (DataRow row in dtDataTable.Rows) {
                     builder.AppendLine(String.Join("\t", row.ItemArray));
                 }
+
+                //foreach (DataRow row in dtDataTable.Rows) {
+                //    int cellCnt = 0;
+                //    foreach (var cell in row.ItemArray) {
+                //        builder.Append("\"");
+                //        builder.Append(cell.ToString().Replace("\"", ""));
+                //        builder.Append("\"");
+                //        if (cellCnt != (row.ItemArray.Count())) {
+                //            builder.Append("\t");
+                //        } 
+                //    }
+                //    builder.Append(Environment.NewLine);
+                //}
+
                 File.WriteAllText(strFilePath, builder.ToString());
             } catch (Exception em) {
                 MessageBox.Show("Error in toCSV Method ---- " + em.Message);
