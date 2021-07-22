@@ -58,6 +58,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label3.Text" xml:space="preserve">
-    <value>This tool allows you to connect wtihout excel to excel files and extract the tabular data in each worksheet to individual csv files.  Please note that with unexpected non conforming tabular data, there could be odd results. Please confirm your delimited files before trying to import them into your SQL Database</value>
+    <value>This tool allows you to connect to excel files without having excel installed and extract the tabular data in each worksheet to individual csv files (tab delimited).  Please note that with unexpected non conforming tabular data, there could be odd results. Please confirm your delimited files before trying to import them into your SQL Database</value>
   </data>
 </root>

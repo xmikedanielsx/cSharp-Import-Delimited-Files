@@ -21,16 +21,30 @@ namespace BulkImportDelimitedFlatFiles
             InitializeComponent();
         }
         FileInfo[] files;
+        public static void showErrorMessages(List<string> errorMessages, string title)
+        {
+            string eMsg = "";
+            foreach (var msg in errorMessages.Select((name, index) => (name, index))) {
+                eMsg += (msg.index + 1).ToString() + ". " + msg.name.ToString() + Environment.NewLine;
+            }
+            MessageBox.Show(eMsg, title);
+
+        }
 
         private void btn_convertExceltoCSV_Click(object sender, EventArgs e)
         {
             string excelFolder = txtbox_excelFolder.Text.ToString();
             string csvFolder = txtbox_csvFolder.Text.ToString();
+            List<string> errorMessages = new List<string>();
             if (excelFolder == "" || !Directory.Exists(excelFolder)) {
-                MessageBox.Show("I am sorry you have either left the excel folder blank or it does not exist");
+                errorMessages.Add("I am sorry you have either left the excel folder blank or it does not exist");
             }
             if (csvFolder == "" || !Directory.Exists(csvFolder)) {
-                MessageBox.Show("I am sorry you have either left the CSV folder blank or it does not exist");
+                errorMessages.Add("I am sorry you have either left the CSV folder blank or it does not exist");
+            }
+            if(errorMessages.Count > 0) {
+                showErrorMessages(errorMessages, "Cannot Convert Files: Error");
+                return;
             }
 
             try {
@@ -161,6 +175,11 @@ namespace BulkImportDelimitedFlatFiles
             if (dr == DialogResult.OK) {
                 txtbox_csvFolder.Text = fd.SelectedPath.ToString();
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

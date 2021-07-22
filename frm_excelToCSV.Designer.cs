@@ -109,6 +109,7 @@ namespace BulkImportDelimitedFlatFiles
             this.label3.Size = new System.Drawing.Size(745, 47);
             this.label3.TabIndex = 7;
             this.label3.Text = resources.GetString("label3.Text");
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // lbl_fileLoadStatus
             // 
@@ -136,7 +137,7 @@ namespace BulkImportDelimitedFlatFiles
             this.MinimizeBox = false;
             this.Name = "frm_excelToCSV";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Excel to CSV";
+            this.Text = "Excel to CSV (Tab Delimited)";
             this.ResumeLayout(false);
             this.PerformLayout();
 
