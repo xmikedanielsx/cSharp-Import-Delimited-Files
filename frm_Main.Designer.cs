@@ -1,7 +1,7 @@
 ﻿
 namespace ImportTabDelimitedFiles
 {
-    partial class Form1
+    partial class frm_Main
     {
         /// <summary>
         ///  Required designer variable.

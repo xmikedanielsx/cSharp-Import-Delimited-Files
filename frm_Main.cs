@@ -16,7 +16,7 @@ using System.Text.Json;
 namespace ImportTabDelimitedFiles
 {
     
-    public partial class Form1 : Form
+    public partial class frm_Main : Form
     {
 
      
@@ -28,7 +28,7 @@ namespace ImportTabDelimitedFiles
         Boolean fileListLoaded = false;
         LocalConfig lconfig;
 
-        public Form1()
+        public frm_Main()
         {
             InitializeComponent();
             lbl_ExpandTopPanel.Visible = false;
@@ -36,6 +36,7 @@ namespace ImportTabDelimitedFiles
             txtbox_defaultDataLength.Text = "max";
             dgv_FieldList.Enabled = false;
             this.setJsonObjectConfig();
+            btn_loadToSQL.Enabled = false;
         }
 
         private void setJsonObjectConfig()
@@ -86,7 +87,9 @@ namespace ImportTabDelimitedFiles
             
 
             
-           
+           if(this.cnn.State == ConnectionState.Open) {
+                this.cnn.Close();
+            }
             this.cnn.ConnectionString = cnnString;
             lbl_testConnStatus.ForeColor = Color.Black;
             lbl_testConnStatus.Text = "Trying to Connect...";
@@ -157,10 +160,20 @@ namespace ImportTabDelimitedFiles
                 foreach(string fi in failedFiles) {
                     lv_fileList.FindItemWithText(fi).ForeColor = Color.Red;
                 }
-
+          
                 this.fileListLoaded = true;
+
+                foreach (ListViewItem lv in lv_fileList.Items) {
+                    this.updateFileMapping(sender, e, lv.Index);
+                    lv_fileList.Items[lv.Index].Checked = true;
+                }
+                if (lv_fileList.Items[0] != null) {
+                    lv_fileList.Items[0].Selected = true;
+                    lv_fileList.Items[0].Focused = true;
+                }
                 dgv_FieldList.Enabled = true;
                 lv_fileList.Enabled = true;
+                btn_loadToSQL.Enabled = true;
             } catch  {
                 lv_fileList.Enabled = false;
                 dgv_FieldList.Enabled = false;
@@ -173,38 +186,51 @@ namespace ImportTabDelimitedFiles
         // TODO: Need to add more validation
         private void loadTablesToSQLServer()
         {
+           
+            
             if(txtbox_FinalTableName.Text.Trim() == "" && chbox_CreateAllTablesTable.Checked == true) {
                 MessageBox.Show("Sorry you have chosen to create an all tables and left the final table name blank. Please fill something in.");
+                return;
             }
-            foreach (System.Collections.Generic.KeyValuePair<string, DataTable> fl in this.filesToLoad) {
-                string fname = fl.Key.ToString().Replace(".txt", "").Replace(".csv", "");
-                //csvPairMatch.Add(fl.Name.ToString(), fname);
-                //listbox_OriginalTablesWithCSVs.Items.Add("New Table To Create: [SR" + txtbox_lot_SRNumber.Text.ToString() + "_"+fname+"]");
+            int fCount = this.lv_fileList.CheckedItems.Count;
+            int fCnt = 1;
+            if(fCount == 0) {
+                MessageBox.Show("Sorry but you have not selected any files to Load. Please select the check box next to the files you wish to load.");
+                return;
+            }
+
+            decimal currentProg = (decimal)((double)fCnt/fCount*100);
+            frm_loadStatus ltDialog = new frm_loadStatus(txtbox_sqlServer.Text.ToString());
+            ltDialog.Show();
+            foreach(ListViewItem lii in lv_fileList.CheckedItems) {
+                
                 lbl_loadFilesStatus.ForeColor = Color.Black;
                 lbl_loadFilesStatus.Text = "Loading your files...";
+                DataTable dtToLoad;
+                FileInfo fi = FileSystem.GetFileInfo(lii.Text.ToString());
+                
+                string tNameToInsert = fi.Name.ToString().Replace(".txt", "").Replace(".csv", "");
+                ltDialog.setLoadingText("Loading Table " + tNameToInsert);
+                ltDialog.setLoadStatus(currentProg);
                 try {
-                    DataTable dtToLoad;
-                    FileInfo fi = new FileInfo(fl.Key.ToString());
-                    string tNameToInsert = fi.Name.ToString().Replace(".txt", "").Replace(".csv", "");
 
-
-                    dtToLoad = fl.Value;
-                    if(chbox_DropTables.Checked == true) {
+                    dtToLoad = this.filesToLoad[lii.Text.ToString()];
+                    if (chbox_DropTables.Checked == true) {
                         string dropTable = "if exists(select 1 FROM sys.tables where name = '" + tNameToInsert + "') BEGIN DROP TABLE [" + tNameToInsert + "]; END";
                         SqlCommand cmdDT = new SqlCommand(dropTable, this.cnn);
                         cmdDT.Connection.Open(); cmdDT.ExecuteNonQuery(); cmdDT.Connection.Close();
                         cmdDT.Dispose();
                     }
-                    
+
 
                     string createTable = "CREATE TABLE [" + tNameToInsert + "] (";
-                    Dictionary<string, Dictionary<string,string>> fd = this.filesToLoadMapping[fi.FullName.ToString()];
-                    
+                    Dictionary<string, Dictionary<string, string>> fd = this.filesToLoadMapping[fi.FullName.ToString()];
+
                     int cLength = dtToLoad.Columns.Count;
                     for (int i = 0; i < cLength; i++) {
                         Dictionary<string, string> dd = fd[dtToLoad.Columns[i].Ordinal.ToString()];
                         string dtstr = dd["dataType"].ToString() == "Text" ? "varchar" : dd["dataType"].ToString();
-                        if(dd["dataType"].ToString() == "Text") {
+                        if (dd["dataType"].ToString() == "Text") {
                             dtstr += "(" + dd["dtLength"].ToString() + ")";
                         }
                         //this.filesToLoadMapping[dtToLoad.Columns[i].ToString()]
@@ -233,7 +259,6 @@ namespace ImportTabDelimitedFiles
                     lbl_loadFilesStatus.ForeColor = Color.Green;
                     lbl_loadFilesStatus.Text = "Your files have been loaded";
 
-
                     //InsertDataIntoSQLServerUsingSQLBulkCopy(dtToLoad, tToInsert, cnn);
                 }
                 catch (Exception ex) {
@@ -242,61 +267,92 @@ namespace ImportTabDelimitedFiles
                     lbl_loadFilesStatus.ForeColor = Color.Red;
                     lbl_loadFilesStatus.Text = ex.Message;
                 }
-
+                fCnt++;
+                currentProg = (decimal)((double)fCnt / fCount * 100);
             }
+            //foreach (System.Collections.Generic.KeyValuePair<string, DataTable> fl in this.filesToLoad) {
+                
+                
+            //} // end foreach
 
+
+            if(chbox_CreateAllTablesTable.Checked == true) {
+                string finalTable = txtbox_FinalTableName.Text.ToString();
+                try {
+                    decimal lstat = new decimal(90);
+                    ltDialog.setLoadStatus(lstat);
+                    ltDialog.setLoadingText("Trying to create your Unioned Table \"" + txtbox_FinalTableName.Text.ToString() + " \"");
+
+                    if(chbox_DropTables.Checked == true) {
+                        string dropTable = "if exists(select 1 FROM sys.tables where name = '" + finalTable + "') BEGIN DROP TABLE [" + finalTable + "]; END";
+                        SqlCommand cmdDT = new SqlCommand(dropTable, this.cnn);
+                        cmdDT.Connection.Open(); cmdDT.ExecuteNonQuery(); cmdDT.Connection.Close();
+                        cmdDT.Dispose();
+                    }
+
+                    cnn.Open();
+                    var enviroment = System.Environment.CurrentDirectory;
+                    string currentLocationOfExe = Directory.GetParent(enviroment).Parent.FullName;
+
+                    string script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
+                    SqlCommand cmScripts = new SqlCommand(script, cnn);
+                    cmScripts.ExecuteNonQuery();
+                    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\OriginalTableList.sql");
+                    cmScripts.CommandText = script;
+                    cmScripts.ExecuteNonQuery();
+                    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\get_originalUnion.sql");
+                    cmScripts.CommandText = script;
+                    cmScripts.ExecuteNonQuery();
+                    cnn.Close();
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(ex.Message.ToString());
+                    cnn.Close();
+                    return;
+                }
+
+                try {
+                    string qToUnion = @"
+                    DECLARE @tvalues OriginalTableList
+                    INSERT INTO @tvalues VALUES ";
+                    int itemsAddedCount = this.lv_fileList.CheckedItems.Count;
+                    int itemsAddedCounter = 1;
+                    foreach(ListViewItem lii in this.lv_fileList.CheckedItems) {
+                        FileInfo fl = FileSystem.GetFileInfo(lii.Text.ToString());
+                        //foreach (FileInfo fl in files) {
+                            if (itemsAddedCounter != itemsAddedCount) {
+                                qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"'), ";
+                            }
+                            else {
+                                qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"') ";
+                            }
+                            itemsAddedCounter++;
+                        //}
+                    }
+                    
+                    qToUnion += Environment.NewLine;
+                    string nTName = finalTable;
+                    qToUnion += @"EXEC dbo.get_OriginalUnion @tvalues, '" + nTName + "'";
+
+                    SqlCommand cmd3 = new SqlCommand(qToUnion, cnn);
+                    cmd3.Connection.Open(); cmd3.ExecuteNonQuery(); cmd3.Connection.Close();
+                    cmd3.Dispose();
+                    string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo."+finalTable+".OriginalTable', 'OriginalFile', 'COLUMN'; ";
+                    SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
+                    cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
+                    cmd4.Dispose();
+
+                    ltDialog.setLoadingText(@"You Now Have A New Table " + Environment.NewLine + nTName);
+                    ltDialog.setLoadStatus(new decimal(100));
+                    ltDialog.showOkButton();
+                } catch (Exception em) {
+                    MessageBox.Show(em.Message.ToString());
+                    ltDialog.showCancelButton();
+                }
+                
+            }
             // SETUP Scripts So that SQL Can be updated for union table and used to create Union Table
-            try {
-
-                cnn.Open();
-                var enviroment = System.Environment.CurrentDirectory;
-                string currentLocationOfExe = Directory.GetParent(enviroment).Parent.FullName;
-
-                string script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
-                SqlCommand cmScripts = new SqlCommand(script, cnn);
-                cmScripts.ExecuteNonQuery();
-                script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\OriginalTableList.sql");
-                cmScripts.CommandText = script;
-                cmScripts.ExecuteNonQuery();
-                script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\get_originalUnion.sql");
-                cmScripts.CommandText = script;
-                cmScripts.ExecuteNonQuery();
-                cnn.Close();
-            }
-            catch (Exception ex) {
-                MessageBox.Show(ex.Message.ToString());
-                cnn.Close();
-                return;
-            }
-
-
-            string qToUnion = @"
-                DECLARE @tvalues OriginalTableList
-                INSERT INTO @tvalues VALUES ";
-            int itemsAddedCount = files.Count();
-            int itemsAddedCounter = 1;
-            foreach (FileInfo fl in files) {
-                if (itemsAddedCounter != itemsAddedCount) {
-                    qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"'), ";
-                }
-                else {
-                    qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"') ";
-                }
-                itemsAddedCounter++;
-            }
-            qToUnion += Environment.NewLine;
-            string nTName = @"AllFilesTable";
-            qToUnion += @"EXEC dbo.get_OriginalUnion @tvalues, '" + nTName + "'";
-
-            SqlCommand cmd3 = new SqlCommand(qToUnion, cnn);
-            cmd3.Connection.Open(); cmd3.ExecuteNonQuery(); cmd3.Connection.Close();
-            cmd3.Dispose();
-            string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo.AllFilesTable.OriginalTable', 'OriginalFile', 'COLUMN'; ";
-            SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
-            cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
-            cmd4.Dispose();
-
-            MessageBox.Show(@"You Now Have A New Table " + Environment.NewLine + nTName);
+           
         }
         
         private  DataTable GetDataTableFromCSVFile(string csv_file_path)
@@ -434,11 +490,12 @@ namespace ImportTabDelimitedFiles
                 txtbox_sqlPass.Enabled = true;
             }
         }
-
-        private void cbl_fileList_SelectedIndexChanged(object sender, EventArgs e)
+        private void updateFileMapping (object sender, EventArgs e, int idx)
         {
+            
             dgv_FieldList.Rows.Clear();
-            FileInfo fl = this.files[lv_fileList.SelectedIndex()];
+            int ci = idx == -1 ?  lv_fileList.SelectedIndex() : idx;
+            FileInfo fl = this.files[ci];
             if (!this.filesToLoad.ContainsKey(fl.FullName.ToString())) {
                 return;
             }
@@ -458,7 +515,7 @@ namespace ImportTabDelimitedFiles
                         , txtbox_defaultDataLength.Text.ToString()
                     );
                 }
-                this.dgv_FieldList_CellValueChanged_Call(sender, null, null);
+                this.dgv_FieldList_CellValueChanged_Call(sender, null, ci);
             }
             else {
                 // Mapping Does Exist. Get Mapping and prefill with mapping
@@ -471,12 +528,16 @@ namespace ImportTabDelimitedFiles
                     );
                 }
             }
+        }
 
+        private void cbl_fileList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.updateFileMapping(sender, e, -1);
         }
 
         private void dgv_FieldList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            this.dgv_FieldList_CellValueChanged_Call(sender, e, null);
+            this.dgv_FieldList_CellValueChanged_Call(sender, e, -1);
         }
         private void updateMappingForFile (int idx)
         {
@@ -497,11 +558,12 @@ namespace ImportTabDelimitedFiles
 
             }
         }
-        private void dgv_FieldList_CellValueChanged_Call (object sender, DataGridViewCellEventArgs e, string row) 
+        private void dgv_FieldList_CellValueChanged_Call (object sender, DataGridViewCellEventArgs e, int ci) 
         {
+            int idx = ci == -1 ? lv_fileList.SelectedIndex() : ci;
             if (this.fileListLoaded) {
                 if(e == null) {
-                    this.updateMappingForFile(lv_fileList.SelectedIndex());
+                    this.updateMappingForFile(idx);
                     return;
                 } 
                 if ( e.RowIndex != 0) {
@@ -521,7 +583,7 @@ namespace ImportTabDelimitedFiles
                         MessageBox.Show("Your Value is invalid for the data length");
                         dgvr.Cells["dtLength"].Value = "max";
                     }
-                    this.updateMappingForFile(lv_fileList.SelectedIndex());
+                    this.updateMappingForFile(idx);
                 }
             
             }
@@ -553,6 +615,7 @@ namespace ImportTabDelimitedFiles
 
         private void btn_loadToSQL_Click(object sender, EventArgs e)
         {
+            this.btn_testConnection_Click(sender, e);
             this.loadTablesToSQLServer();
         }
 
