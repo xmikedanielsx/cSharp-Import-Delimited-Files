@@ -1,5 +1,5 @@
 ﻿
-namespace ImportTabDelimitedFiles
+namespace BulkImportDelimitedFlatFiles
 {
     partial class frm_loadStatus
     {

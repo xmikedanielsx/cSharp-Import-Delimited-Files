@@ -13,7 +13,7 @@ using Microsoft.VisualBasic.FileIO;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 
-namespace ImportTabDelimitedFiles
+namespace BulkImportDelimitedFlatFiles
 {
     
     public partial class frm_Main : Form

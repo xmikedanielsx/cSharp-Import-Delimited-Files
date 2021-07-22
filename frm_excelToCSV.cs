@@ -12,7 +12,7 @@ using Microsoft.VisualBasic.FileIO;
 
 
 
-namespace ImportTabDelimitedFiles
+namespace BulkImportDelimitedFlatFiles
 {
     public partial class frm_excelToCSV : Form
     {
