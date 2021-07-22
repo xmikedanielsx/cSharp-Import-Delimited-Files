@@ -7,7 +7,8 @@
     <Authors>Michael Daniels</Authors>
     <Company>Personal Projects</Company>
     <Product>Bulk Import Flat Files to MSSQL</Product>
-    <Description>Aishwarya Maddimsetty</Description>
+    <Description>This project is to bulk import with data type selection into SQL with an option to build a union table that unions all of your tables together with column names that are the same into a single table.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
