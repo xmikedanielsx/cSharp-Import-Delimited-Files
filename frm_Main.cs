@@ -627,6 +627,12 @@ namespace ImportTabDelimitedFiles
                 txtbox_FinalTableName.Visible = false;
             }
         }
+
+        private void openExcelToCSv(object sender, EventArgs e)
+        {
+            frm_excelToCSV etc = new frm_excelToCSV();
+            etc.Show();
+        }
     }
     public static class Extension
     {

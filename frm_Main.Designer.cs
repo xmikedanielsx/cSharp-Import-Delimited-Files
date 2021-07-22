@@ -69,6 +69,8 @@ namespace ImportTabDelimitedFiles
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
             this.txtbox_FinalTableName = new System.Windows.Forms.TextBox();
             this.btn_loadToSQL = new System.Windows.Forms.Button();
+            this.tsmii_excelToCsvConverter = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
             this.sc_Main.Panel2.SuspendLayout();
@@ -470,6 +472,8 @@ namespace ImportTabDelimitedFiles
             // tsmi_tools
             // 
             this.tsmi_tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmii_excelToCsvConverter,
+            this.toolStripSeparator1,
             this.tsmi_clearData});
             this.tsmi_tools.Name = "tsmi_tools";
             this.tsmi_tools.Size = new System.Drawing.Size(47, 20);
@@ -478,7 +482,7 @@ namespace ImportTabDelimitedFiles
             // tsmi_clearData
             // 
             this.tsmi_clearData.Name = "tsmi_clearData";
-            this.tsmi_clearData.Size = new System.Drawing.Size(145, 22);
+            this.tsmi_clearData.Size = new System.Drawing.Size(193, 22);
             this.tsmi_clearData.Text = "Clear All Data";
             this.tsmi_clearData.Click += new System.EventHandler(this.tsm_clearData_Click);
             // 
@@ -499,7 +503,19 @@ namespace ImportTabDelimitedFiles
             this.btn_loadToSQL.UseVisualStyleBackColor = true;
             this.btn_loadToSQL.Click += new System.EventHandler(this.btn_loadToSQL_Click);
             // 
-            // Form1
+            // tsmii_excelToCsvConverter
+            // 
+            this.tsmii_excelToCsvConverter.Name = "tsmii_excelToCsvConverter";
+            this.tsmii_excelToCsvConverter.Size = new System.Drawing.Size(193, 22);
+            this.tsmii_excelToCsvConverter.Text = "Excel to CSV Converter";
+            this.tsmii_excelToCsvConverter.Click += new System.EventHandler(this.openExcelToCSv);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 6);
+            // 
+            // frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -512,7 +528,7 @@ namespace ImportTabDelimitedFiles
             this.Controls.Add(this.chbox_CreateAllTablesTable);
             this.Controls.Add(this.ms_Main);
             this.MainMenuStrip = this.ms_Main;
-            this.Name = "Form1";
+            this.Name = "frm_Main";
             this.Text = "Import Flat Files in Bulk";
             this.sc_Main.Panel1.ResumeLayout(false);
             this.sc_Main.Panel1.PerformLayout();
@@ -574,6 +590,8 @@ namespace ImportTabDelimitedFiles
         private System.Windows.Forms.ListView lv_fileList;
         private System.Windows.Forms.Button btn_loadToSQL;
         private System.Windows.Forms.TextBox txtbox_FinalTableName;
+        private System.Windows.Forms.ToolStripMenuItem tsmii_excelToCsvConverter;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 
