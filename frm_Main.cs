@@ -46,6 +46,7 @@ namespace BulkImportDelimitedFlatFiles
                 this.lconfig = JsonSerializer.Deserialize<LocalConfig>(File.ReadAllText(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"));
             }
             txtbox_FinalTableName.Text = this.lconfig.tableName.ToString();
+            txtbox_tablePrefix.Text = this.lconfig.tablePrefix.ToString();
             
         }
         
@@ -186,9 +187,9 @@ namespace BulkImportDelimitedFlatFiles
         // TODO: Need to add more validation
         private void loadTablesToSQLServer()
         {
-           
+
             
-            if(txtbox_FinalTableName.Text.Trim() == "" && chbox_CreateAllTablesTable.Checked == true) {
+            if (txtbox_FinalTableName.Text.Trim() == "" && chbox_CreateAllTablesTable.Checked == true) {
                 MessageBox.Show("Sorry you have chosen to create an all tables and left the final table name blank. Please fill something in.");
                 return;
             }
@@ -198,20 +199,63 @@ namespace BulkImportDelimitedFlatFiles
                 MessageBox.Show("Sorry but you have not selected any files to Load. Please select the check box next to the files you wish to load.");
                 return;
             }
+            string lastTableName;
+            int lastTableNumberOriginal = 1;
+            int lastTableNumber = 1;
+            string tablePrefix = "";
+            Boolean useTablePrefix = chbox_tablePrefix.Checked;
+
 
             decimal currentProg = (decimal)((double)fCnt/fCount*100);
+            
+            if (useTablePrefix) {
+                tablePrefix = txtbox_tablePrefix.Text.ToString();
+                try {
+                    //string query = @"SELECT MAX(t.name) AS LastTable, RIGHT(MAX(T.name),3) AS LastTableNumber FROM sys.tables t WHERE name LIKE '%" + tablePrefix + @"[0-9]%'";
+                    string query = @"SELECT * FROM (SELECT MAX(t.name) AS LastTable, RIGHT(MAX(T.name),3) AS LastTableNumber FROM sys.tables t WHERE name LIKE '"+tablePrefix+@"[0-9]%') a WHERE lastTable IS NOT null";
+                    cnn.Open();
+                    SqlCommand cmd = new SqlCommand(query, this.cnn);
+                    
+                    //MessageBox.Show("Connection Open ! ");
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+                    da.Fill(ds);
+                    
+                    if(ds.Tables.Count > 0) {
+                        if(ds.Tables[0].Rows.Count > 0) {
+                            lastTableName = ds.Tables[0].Rows[0]["LastTable"].ToString();
+                            lastTableNumberOriginal = Int32.Parse(ds.Tables[0].Rows[0]["LastTableNumber"].ToString())+1;
+                        } else {
+                            lastTableName = txtbox_tablePrefix.Text.ToString();
+                            lastTableNumberOriginal = Int32.Parse("000") + 1;
+                        }
+                    } else {
+                        lastTableName = txtbox_tablePrefix.Text.ToString();
+                        lastTableNumberOriginal = Int32.Parse("000") + 1;
+                    }
+                    this.cnn.Close();
+                }
+                catch (Exception ex) {
+                    if (this.cnn.State == ConnectionState.Open) { cnn.Close(); }
+                    MessageBox.Show(ex.Message.ToString());
+                    return;
+                }
+            }
+            lastTableNumber = lastTableNumberOriginal;
             frm_loadStatus ltDialog = new frm_loadStatus(txtbox_sqlServer.Text.ToString());
             ltDialog.Show();
-            foreach(ListViewItem lii in lv_fileList.CheckedItems) {
-                
+            Boolean errorsHappened = false;
+            foreach (ListViewItem lii in lv_fileList.CheckedItems) {
+
                 lbl_loadFilesStatus.ForeColor = Color.Black;
                 lbl_loadFilesStatus.Text = "Loading your files...";
                 DataTable dtToLoad;
                 FileInfo fi = FileSystem.GetFileInfo(lii.Text.ToString());
-                
-                string tNameToInsert = fi.Name.ToString().Replace(".txt", "").Replace(".csv", "");
+                string fName = fi.Name.ToString().Replace(".txt", "").Replace(".csv", "");
+                string tNameToInsert = useTablePrefix ? tablePrefix + lastTableNumber.ToString().PadLeft(3, '0') : fName;
                 ltDialog.setLoadingText("Loading Table " + tNameToInsert);
                 ltDialog.setLoadStatus(currentProg);
+
                 try {
 
                     dtToLoad = this.filesToLoad[lii.Text.ToString()];
@@ -266,10 +310,24 @@ namespace BulkImportDelimitedFlatFiles
                     cnn.Close();
                     lbl_loadFilesStatus.ForeColor = Color.Red;
                     lbl_loadFilesStatus.Text = ex.Message;
+                    errorsHappened = true;
                 }
                 fCnt++;
+                lastTableNumber++;
                 currentProg = (decimal)((double)fCnt / fCount * 100);
             }
+          
+
+
+            if (chbox_CreateAllTablesTable.Checked == false) {
+                ltDialog.setLoadingText(errorsHappened ? @"We loaded the tables we could" : @"Your Tables have Been Loaded ");
+                ltDialog.setLoadStatus(new decimal(100));
+                ltDialog.showOkButton();
+                btn_loadToSQL.Enabled = false;
+                return;
+            }
+
+            lastTableNumber = lastTableNumberOriginal;
             //foreach (System.Collections.Generic.KeyValuePair<string, DataTable> fl in this.filesToLoad) {
                 
                 
@@ -310,25 +368,42 @@ namespace BulkImportDelimitedFlatFiles
                     cnn.Close();
                     return;
                 }
-
+                
+                
+                
+                Dictionary<string, string> tListLoaded = new Dictionary<string, string>();
                 try {
+                    
                     string qToUnion = @"
-                    DECLARE @tvalues OriginalTableList
-                    INSERT INTO @tvalues VALUES ";
+                    DECLARE @tvalues OriginalTableList ";
+                    qToUnion += useTablePrefix  ? @"
+                    INSERT INTO @tvalues (tbl, srcFile) VALUES " : @"
+                    INSERT INTO @tvalues(tbl) VALUES ";
                     int itemsAddedCount = this.lv_fileList.CheckedItems.Count;
                     int itemsAddedCounter = 1;
                     foreach(ListViewItem lii in this.lv_fileList.CheckedItems) {
                         FileInfo fl = FileSystem.GetFileInfo(lii.Text.ToString());
-                        //foreach (FileInfo fl in files) {
-                            if (itemsAddedCounter != itemsAddedCount) {
-                                qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"'), ";
-                            }
-                            else {
-                                qToUnion += @" ('" + fl.Name.ToString().Replace(".txt", "").Replace(".csv", "") + @"') ";
-                            }
-                            itemsAddedCounter++;
-                        //}
+                        string fName = fl.Name.ToString().Replace(".txt", "").Replace(".csv", "");
+                        string tName = useTablePrefix == true ? tablePrefix + lastTableNumber.ToString().PadLeft(3, '0') : fName;
+                        if (itemsAddedCounter != itemsAddedCount) {
+                        qToUnion +=
+                            useTablePrefix ? @" ('" + tName + @"', '"+ fName +"'), "
+                            : @" ('" + fName + @"'), ";
+
+                        }
+                        else {
+                            qToUnion +=
+                            useTablePrefix ? @" ('" + tName + @"', '" + fName + "') "
+                            : @" ('" + fName + @"') ";
+                        }
+                        if(useTablePrefix) {
+                            tListLoaded.Add(fl.FullName.ToString(), tName);
+                        }
+                        lastTableNumber++;
+                        itemsAddedCounter++;
                     }
+                        
+
                     
                     qToUnion += Environment.NewLine;
                     string nTName = finalTable;
@@ -337,10 +412,10 @@ namespace BulkImportDelimitedFlatFiles
                     SqlCommand cmd3 = new SqlCommand(qToUnion, cnn);
                     cmd3.Connection.Open(); cmd3.ExecuteNonQuery(); cmd3.Connection.Close();
                     cmd3.Dispose();
-                    string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo."+finalTable+".OriginalTable', 'OriginalFile', 'COLUMN'; ";
-                    SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
-                    cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
-                    cmd4.Dispose();
+                    //string ChangeOriginalTableToFile = @"EXEC sp_rename 'dbo."+finalTable+".OriginalTable', 'OriginalFile', 'COLUMN'; ";
+                    //SqlCommand cmd4 = new SqlCommand(ChangeOriginalTableToFile, cnn);
+                    //cmd4.Connection.Open(); cmd4.ExecuteNonQuery(); cmd4.Connection.Close();
+                    //cmd4.Dispose();
 
                     ltDialog.setLoadingText(@"You Now Have A New Table " + Environment.NewLine + nTName);
                     ltDialog.setLoadStatus(new decimal(100));
@@ -352,7 +427,7 @@ namespace BulkImportDelimitedFlatFiles
                 
             }
             // SETUP Scripts So that SQL Can be updated for union table and used to create Union Table
-           
+            btn_loadToSQL.Enabled = false;
         }
         
         private  DataTable GetDataTableFromCSVFile(string csv_file_path)
@@ -621,7 +696,7 @@ namespace BulkImportDelimitedFlatFiles
 
         private void chbox_CreateAllTablesTable_CheckedChanged(object sender, EventArgs e)
         {
-            if(this.chbox_CreateAllTablesTable.Checked == true) {
+            if(this.chbox_CreateAllTablesTable.Checked) {
                 txtbox_FinalTableName.Visible = true;
             } else {
                 txtbox_FinalTableName.Visible = false;
@@ -632,6 +707,32 @@ namespace BulkImportDelimitedFlatFiles
         {
             frm_excelToCSV etc = new frm_excelToCSV();
             etc.Show();
+        }
+
+        private void chbox_tablePrefix_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chbox_tablePrefix.Checked) {
+                txtbox_tablePrefix.Visible = true;
+            } else {
+                txtbox_tablePrefix.Visible = false;
+            }
+            if(chbox_tablePrefix.Checked && chbox_DropTables.Checked) {
+                lbl_warningIncremental.Text = "Drop Tables will be ignored w/create incremental checked";
+                lbl_warningIncremental.ForeColor = Color.Red;
+            } else {
+                lbl_warningIncremental.Text = "";
+            }
+        }
+
+        private void chbox_DropTables_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chbox_tablePrefix.Checked && chbox_DropTables.Checked) {
+                lbl_warningIncremental.Text = "Drop Tables will be ignored w/create incremental checked";
+                lbl_warningIncremental.ForeColor = Color.Red;
+            }
+            else {
+                lbl_warningIncremental.Text = "";
+            }
         }
     }
     public static class Extension
@@ -648,5 +749,6 @@ namespace BulkImportDelimitedFlatFiles
     public class LocalConfig
     {
         public string tableName { get; set; }
+        public string tablePrefix { get; set; }
     }
 }

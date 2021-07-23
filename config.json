@@ -1,4 +1,4 @@
 {
 	"tableName": "Original_",
-	"someOtherProp": "Property"
+	"tablePrefix":  "Original"
 }

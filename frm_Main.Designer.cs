@@ -71,6 +71,9 @@ namespace BulkImportDelimitedFlatFiles
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
             this.txtbox_FinalTableName = new System.Windows.Forms.TextBox();
             this.btn_loadToSQL = new System.Windows.Forms.Button();
+            this.chbox_tablePrefix = new System.Windows.Forms.CheckBox();
+            this.txtbox_tablePrefix = new System.Windows.Forms.TextBox();
+            this.lbl_warningIncremental = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
             this.sc_Main.Panel2.SuspendLayout();
@@ -433,12 +436,13 @@ namespace BulkImportDelimitedFlatFiles
             this.chbox_DropTables.TabIndex = 32;
             this.chbox_DropTables.Text = "Drop Tables If Exist";
             this.chbox_DropTables.UseVisualStyleBackColor = true;
+            this.chbox_DropTables.CheckedChanged += new System.EventHandler(this.chbox_DropTables_CheckedChanged);
             // 
             // lbl_LoadToSQLStatus
             // 
-            this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(620, 719);
+            this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(16, 752);
             this.lbl_LoadToSQLStatus.Name = "lbl_LoadToSQLStatus";
-            this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(422, 22);
+            this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(1158, 22);
             this.lbl_LoadToSQLStatus.TabIndex = 30;
             this.lbl_LoadToSQLStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -449,7 +453,7 @@ namespace BulkImportDelimitedFlatFiles
             this.tsmi_tools});
             this.ms_Main.Location = new System.Drawing.Point(0, 0);
             this.ms_Main.Name = "ms_Main";
-            this.ms_Main.Size = new System.Drawing.Size(1189, 24);
+            this.ms_Main.Size = new System.Drawing.Size(1195, 24);
             this.ms_Main.TabIndex = 27;
             this.ms_Main.Text = "menuStrip1";
             // 
@@ -507,7 +511,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadToSQL
             // 
-            this.btn_loadToSQL.Location = new System.Drawing.Point(1098, 718);
+            this.btn_loadToSQL.Location = new System.Drawing.Point(1098, 720);
             this.btn_loadToSQL.Name = "btn_loadToSQL";
             this.btn_loadToSQL.Size = new System.Drawing.Size(75, 23);
             this.btn_loadToSQL.TabIndex = 33;
@@ -515,16 +519,47 @@ namespace BulkImportDelimitedFlatFiles
             this.btn_loadToSQL.UseVisualStyleBackColor = true;
             this.btn_loadToSQL.Click += new System.EventHandler(this.btn_loadToSQL_Click);
             // 
+            // chbox_tablePrefix
+            // 
+            this.chbox_tablePrefix.AutoSize = true;
+            this.chbox_tablePrefix.Checked = true;
+            this.chbox_tablePrefix.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chbox_tablePrefix.Location = new System.Drawing.Point(620, 724);
+            this.chbox_tablePrefix.Name = "chbox_tablePrefix";
+            this.chbox_tablePrefix.Size = new System.Drawing.Size(219, 19);
+            this.chbox_tablePrefix.TabIndex = 33;
+            this.chbox_tablePrefix.Text = "Create Incremental Tables (w/ Prefix)";
+            this.chbox_tablePrefix.UseVisualStyleBackColor = true;
+            this.chbox_tablePrefix.CheckedChanged += new System.EventHandler(this.chbox_tablePrefix_CheckedChanged);
+            this.chbox_tablePrefix.CheckStateChanged += new System.EventHandler(this.chbox_CreateAllTablesTable_CheckedChanged);
+            // 
+            // txtbox_tablePrefix
+            // 
+            this.txtbox_tablePrefix.Location = new System.Drawing.Point(838, 720);
+            this.txtbox_tablePrefix.Name = "txtbox_tablePrefix";
+            this.txtbox_tablePrefix.Size = new System.Drawing.Size(254, 23);
+            this.txtbox_tablePrefix.TabIndex = 34;
+            // 
+            // lbl_warningIncremental
+            // 
+            this.lbl_warningIncremental.Location = new System.Drawing.Point(12, 704);
+            this.lbl_warningIncremental.Name = "lbl_warningIncremental";
+            this.lbl_warningIncremental.Size = new System.Drawing.Size(342, 15);
+            this.lbl_warningIncremental.TabIndex = 35;
+            // 
             // frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1189, 767);
+            this.ClientSize = new System.Drawing.Size(1195, 781);
+            this.Controls.Add(this.lbl_warningIncremental);
             this.Controls.Add(this.btn_loadToSQL);
+            this.Controls.Add(this.txtbox_tablePrefix);
             this.Controls.Add(this.txtbox_FinalTableName);
             this.Controls.Add(this.lbl_LoadToSQLStatus);
             this.Controls.Add(this.sc_Main);
             this.Controls.Add(this.chbox_DropTables);
+            this.Controls.Add(this.chbox_tablePrefix);
             this.Controls.Add(this.chbox_CreateAllTablesTable);
             this.Controls.Add(this.ms_Main);
             this.MainMenuStrip = this.ms_Main;
@@ -592,6 +627,9 @@ namespace BulkImportDelimitedFlatFiles
         private System.Windows.Forms.TextBox txtbox_FinalTableName;
         private System.Windows.Forms.ToolStripMenuItem tsmii_excelToCsvConverter;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.CheckBox chbox_tablePrefix;
+        private System.Windows.Forms.TextBox txtbox_tablePrefix;
+        private System.Windows.Forms.Label lbl_warningIncremental;
     }
 }
 
