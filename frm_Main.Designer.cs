@@ -319,8 +319,8 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // sc_innerContainer
             // 
-            this.sc_innerContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.sc_innerContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sc_innerContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sc_innerContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
