@@ -29,6 +29,9 @@ namespace BulkImportDelimitedFlatFiles
         Boolean fileListLoaded = false;
         LocalConfig lconfig;
         Thread mainThread;
+        string appFile;
+        string appFolder;
+        string cfgJsonFile;
 
         public frm_Main()
         {
@@ -37,6 +40,9 @@ namespace BulkImportDelimitedFlatFiles
             cmbox_delimiter.SelectedItem = "Tab";
             txtbox_defaultDataLength.Text = "max";
             dgv_FieldList.Enabled = false;
+            this.appFile = System.Reflection.Assembly.GetExecutingAssembly().Location.ToString();
+            this.appFolder = Path.GetDirectoryName(this.appFile) + @"\";
+            this.cfgJsonFile = appFolder + @"config.json";
             this.setJsonObjectConfig();
             btn_loadToSQL.Enabled = false;
             this.mainThread = Thread.CurrentThread;
@@ -46,12 +52,20 @@ namespace BulkImportDelimitedFlatFiles
         private void setJsonObjectConfig()
         {
             var enviroment = System.Environment.CurrentDirectory;
-            if (File.Exists(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"))
+            //if (File.Exists(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"))
+            //{
+            //    this.lconfig = JsonSerializer.Deserialize<LocalConfig>(File.ReadAllText(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"));
+            //}
+            if (File.Exists(this.cfgJsonFile))
             {
-                this.lconfig = JsonSerializer.Deserialize<LocalConfig>(File.ReadAllText(@"" + Directory.GetParent(enviroment).Parent.FullName.ToString().Replace(".dll", "") + @"\config.json"));
+                this.lconfig = JsonSerializer.Deserialize<LocalConfig>(File.ReadAllText(this.cfgJsonFile));
             }
-            txtbox_FinalTableName.Text = this.lconfig.tableName.ToString();
-            txtbox_tablePrefix.Text = this.lconfig.tablePrefix.ToString();
+
+            txtbox_FinalTableName.Text = "Original_";
+            txtbox_tablePrefix.Text = "Original";
+
+            //txtbox_FinalTableName.Text = this.lconfig.tableName.ToString();
+            //txtbox_tablePrefix.Text = this.lconfig.tablePrefix.ToString();
 
         }
 
@@ -169,24 +183,25 @@ namespace BulkImportDelimitedFlatFiles
                 // Update parent object with the file list from the child thread -- this is safe because it should only be ran once due to button being disabled
                 Invoke(new Action<FileInfo[]>(updateFileListObject), new object[] { tfiles });
 
-
-
                 // Create new local thread objec to hold files to load
                 Dictionary<string, DataTable> ftLoad = new Dictionary<string, DataTable>();
                 Invoke(new Action(updateFilesToLoad));
                 List<string> failedFiles = new List<string>();
                 foreach (FileInfo fl in tfiles)
                 {
+                    // set file name variable
                     string fileName = fl.FullName.ToString();
-                    //MessageBox.Show(fileName);
                     Invoke(new Action<string>(addFileToList), fileName);
 
+                    // Get the DataTable from the file
                     DataTable dtfl = (DataTable)Invoke(new Func<string, DataTable>(GetDataTableFromCSVFile), fileName);
 
+                    // if the datatable is not null then add the data file to the list of files loaded
                     if (dtfl != null)
                     {
                         Invoke(new Action<string, DataTable>(addAFileToLoad), new object[] { fileName, dtfl });
                     }
+                    // if the datatable is null then that means the CSV Extraction failed and we'll load it to failed files.
                     else
                     {
                         Invoke(new Action<string>(addFailedFileToList), fileName);
@@ -470,13 +485,13 @@ namespace BulkImportDelimitedFlatFiles
                     var enviroment = System.Environment.CurrentDirectory;
                     string currentLocationOfExe = Directory.GetParent(enviroment).Parent.FullName;
 
-                    string script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
+                    string script = File.ReadAllText(this.appFolder + @"\SQL Scripts\DropOriginalTableCustomFunctions.sql");
                     SqlCommand cmScripts = new SqlCommand(script, cnn);
                     cmScripts.ExecuteNonQuery();
-                    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\OriginalTableList.sql");
+                    script = File.ReadAllText(this.appFolder + @"\SQL Scripts\OriginalTableList.sql");
                     cmScripts.CommandText = script;
                     cmScripts.ExecuteNonQuery();
-                    script = File.ReadAllText(@"" + currentLocationOfExe.ToString().Replace(".dll", "") + @"\SQL Scripts\get_originalUnion.sql");
+                    script = File.ReadAllText(this.appFolder + @"\SQL Scripts\get_originalUnion.sql");
                     cmScripts.CommandText = script;
                     cmScripts.ExecuteNonQuery();
                     cnn.Close();
@@ -620,7 +635,11 @@ namespace BulkImportDelimitedFlatFiles
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
-
+            ControlPaint.DrawBorder(e.Graphics, sc_Main.Panel1.ClientRectangle,
+                Color.Black, 1, ButtonBorderStyle.Solid,
+                Color.Black, 1, ButtonBorderStyle.Solid,
+                Color.Black, 1, ButtonBorderStyle.Solid,
+                Color.Black, 1, ButtonBorderStyle.Solid);
         }
 
         private void lbl_CollapseTopPanel_Click(object sender, EventArgs e)
@@ -680,17 +699,37 @@ namespace BulkImportDelimitedFlatFiles
 
         }
 
+        int dblbl_left;
+        int dbtxtbox_left;
+        int btntestconn_left;
         private void chbox_windowsAuth_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chbox_windowsAuth.Checked == true)
             {
                 txtbox_sqlUser.Enabled = false;
                 txtbox_sqlPass.Enabled = false;
+                txtbox_sqlUser.Visible = false;
+                txtbox_sqlPass.Visible = false;
+                lbl_sqlUser.Visible = false;
+                lbl_sqlPass.Visible = false;
+                this.dblbl_left = lbl_sqlDatabase.Left;
+                this.dbtxtbox_left = txtbox_sqlDatabase.Left;
+                this.btntestconn_left = btn_testConnection.Left;
+                lbl_sqlDatabase.Left = txtbox_sqlServer.Right + 10;
+                txtbox_sqlDatabase.Left = lbl_sqlDatabase.Right + 10;
+                btn_testConnection.Left = txtbox_sqlDatabase.Right + 10;
             }
             else
             {
                 txtbox_sqlUser.Enabled = true;
                 txtbox_sqlPass.Enabled = true;
+                txtbox_sqlUser.Visible = true;
+                txtbox_sqlPass.Visible = true;
+                lbl_sqlUser.Visible = true;
+                lbl_sqlPass.Visible = true;
+                lbl_sqlDatabase.Left = this.dblbl_left;
+                txtbox_sqlDatabase.Left = this.dbtxtbox_left;
+                btn_testConnection.Left = this.btntestconn_left;
             }
         }
         private void updateFileMapping(object sender, EventArgs e, int idx)
@@ -887,6 +926,11 @@ namespace BulkImportDelimitedFlatFiles
             {
                 lbl_warningIncremental.Text = "";
             }
+        }
+
+        private void lbl_sqlPass_Click(object sender, EventArgs e)
+        {
+
         }
     }
     public static class Extension

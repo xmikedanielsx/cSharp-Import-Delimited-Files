@@ -10,6 +10,7 @@
     <Description>This project is to bulk import with data type selection into SQL with an option to build a union table that unions all of your tables together with column names that are the same into a single table.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>BulkImportDelimitedFlatFiles</PackageId>
+    <ApplicationIcon>csharp delimited loader icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,26 +19,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="config.json" />
+    <None Remove="SQL Scripts\DropOriginalTableCustomFunctions.sql" />
+    <None Remove="SQL Scripts\get_originalUnion.sql" />
+    <None Remove="SQL Scripts\OriginalTableList.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SQL Scripts\DropOriginalTableCustomFunctions.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SQL Scripts\get_originalUnion.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SQL Scripts\OriginalTableList.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SQL Scripts\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="SQL Scripts\DropOriginalTableCustomFunctions.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="SQL Scripts\get_originalUnion.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="SQL Scripts\OriginalTableList.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
