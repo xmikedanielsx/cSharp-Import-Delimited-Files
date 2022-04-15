@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,6 +24,7 @@ namespace BulkImportDelimitedFlatFiles
 
         SqlConnection cnn = new SqlConnection();
         int hasError = 0;
+        int hasFileLoadError = 0;
         FileInfo[] files = default(FileInfo[]);
         Dictionary<string, DataTable> filesToLoad = new Dictionary<string, DataTable>();
         Dictionary<string, Dictionary<string, Dictionary<string, string>>> filesToLoadMapping = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
@@ -116,6 +118,7 @@ namespace BulkImportDelimitedFlatFiles
             lbl_testConnStatus.Text = "Trying to Connect...";
             try
             {
+                this.hasError = 0;
                 this.cnn.Open();
                 lbl_testConnStatus.ForeColor = Color.Green;
                 lbl_testConnStatus.Text = "Connection Successful";
@@ -269,16 +272,16 @@ namespace BulkImportDelimitedFlatFiles
             /*
              *  VALIDATION STUFF
              */
+            this.hasFileLoadError = 0;
             lv_fileList.Items.Clear();
             dgv_FieldList.Rows.Clear();
             //this.btn_testConnection_Click(sender, e);
-            if (this.hasError == 1) { return; }
+            
             if (txtbox_pickUpPath.Text.ToString() == "" || Directory.Exists(txtbox_pickUpPath.Text.ToString()) == false)
             {
                 MessageBox.Show("I am sorry your folder path is either blank or does not exist");
-                this.hasError = 1;
+                this.hasFileLoadError = 1;
             }
-            if (this.hasError == 1) { return; }
             var filesNullOrNot = (files != null);
             var filesToLoadIsNull = (filesToLoad != null);
 
@@ -292,15 +295,17 @@ namespace BulkImportDelimitedFlatFiles
             // public void ldFiles (string puPath,FileInfo[] tfiles, ListView lvfiles, Dictionary<string, DataTable> ftLoad, DataGridView dgvfl )
         }
 
-        frm_loadStatus ltDialog;
+        frm_loadStatus ltDialog = new frm_loadStatus();
 
         private void btn_loadToSQL_Click(object sender, EventArgs e)
-        {
+        {   
             btn_loadToSQL.Enabled = false;
             btn_loadFilesToList.Enabled = false;
             btn_loadToSQL.Text = "Loading...";
 
             this.btn_testConnection_Click(sender, e);
+            if (hasError == 1) { MessageBox.Show("Please resolve either your SQL Server Error before you try to Load to SQL"); return; }
+            if (hasFileLoadError == 1) { MessageBox.Show("Please resolve either your File Load Error before you try to Load to SQL"); return; }
 
             // some basic validation
             if (txtbox_FinalTableName.Text.Trim() == "" && chbox_CreateAllTablesTable.Checked == true)
@@ -314,9 +319,9 @@ namespace BulkImportDelimitedFlatFiles
                 MessageBox.Show("Sorry but you have not selected any files to Load. Please select the check box next to the files you wish to load.");
                 return;
             }
-            this.ltDialog = new frm_loadStatus(txtbox_sqlServer.Text.ToString());
-            ltDialog.Show();
-            ltDialog.Text = @"Trying to get your latest incrementing table";
+            this.ltDialog.Text = txtbox_sqlServer.Text;
+            this.ltDialog.Show();
+            this.ltDialog.setLoadingText(Color.Black, @"Trying to get your latest incrementing table");
             Thread ltsThread = new Thread(() => loadTablesToSQLServer(
                 chbox_tablePrefix.Checked
                 , txtbox_tablePrefix.Text
@@ -328,29 +333,15 @@ namespace BulkImportDelimitedFlatFiles
                 , this.appFolder
             ));
             ltsThread.Start();
-            //    this.loadTablesToSQLServer(
-            //            lv_fileList
-            //            , chbox_tablePrefix.Checked
-            //            , txtbox_tablePrefix.Text
-            //            , txtbox_FinalTableName.Text
-            //            , this.filesToLoad
-            //            , chbox_DropTables.Checked
-            //            , chbox_CreateAllTablesTable.Checked
-            //            , this.filesToLoadMapping
-            //            , this.appFolder
-            //           );
-            //}
         }
         public void updateSQLLoadDialogText (string stToLoad)
         {
             this.ltDialog.Text = stToLoad;
         }
 
-        public void updateStatusTextLoadSQL (Color clr, string stToLoad)
+        public void updateStatusTextLoadSQL (Color clr, string strToLoad)
         {
-            this.lbl_loadFilesStatus.ForeColor = clr;
-            this.lbl_loadFilesStatus.Text = stToLoad;
-            this.lbl_loadFilesStatus.Visible = true;
+            this.ltDialog.setLoadingText( clr, strToLoad);
         }
         
         public void updateSQLLoadProgress (decimal prg)
@@ -360,6 +351,7 @@ namespace BulkImportDelimitedFlatFiles
 
         public void finishedLoadingToSQLSteps ()
         {
+            this.ltDialog.showCancelButton();
             this.btn_loadToSQL.Text = "Load To SQL";
             this.btn_loadToSQL.Enabled = true;
             this.btn_loadFilesToList.Enabled = true;
@@ -367,7 +359,7 @@ namespace BulkImportDelimitedFlatFiles
 
         public void showOkLTSButton ()
         {
-            this.ltDialog.showOkButton();
+            this.ltDialog.showCancelButton();
         }
 
         public Dictionary<string, DataTable> getfilesToLoadDic ()
@@ -1033,6 +1025,17 @@ namespace BulkImportDelimitedFlatFiles
         private void lbl_sqlPass_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string msg = @"Bulk Importer Tool" + Environment.NewLine + @"Build 1.0.1.8" + Environment.NewLine + Environment.NewLine + @"Contact: Mike Daniels (Git Hub)" + Environment.NewLine + Environment.NewLine + @"https://github.com/xmikedanielsx";
+            frm_infoBox ibox = new frm_infoBox();
+            ibox.setMessage(Color.Black, msg);
+            //ibox.Left = (this.Left + this.Width) / 2;
+            //ibox.Top = (this.Top + this.Height) / 2;
+
+            ibox.ShowDialog();
         }
     }
     public static class Extension

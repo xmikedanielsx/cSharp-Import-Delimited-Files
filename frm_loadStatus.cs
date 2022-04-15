@@ -23,8 +23,9 @@ namespace BulkImportDelimitedFlatFiles
             }
             this.btn_closeDialog.Visible = false;
         }
-        public void setLoadingText(string ldText)
+        public void setLoadingText(Color clr, string ldText)
         {
+            this.lbl_loadingTableStatus.ForeColor = clr;
             this.lbl_loadingTableStatus.Text = ldText;
         }
         public void setLoadStatus(decimal ldVal)

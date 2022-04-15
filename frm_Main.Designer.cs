@@ -75,6 +75,8 @@ namespace BulkImportDelimitedFlatFiles
             this.chbox_tablePrefix = new System.Windows.Forms.CheckBox();
             this.txtbox_tablePrefix = new System.Windows.Forms.TextBox();
             this.lbl_warningIncremental = new System.Windows.Forms.Label();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.sc_Main)).BeginInit();
             this.sc_Main.Panel1.SuspendLayout();
             this.sc_Main.Panel2.SuspendLayout();
@@ -460,7 +462,8 @@ namespace BulkImportDelimitedFlatFiles
             this.ms_Main.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.ms_Main.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsm_file,
-            this.tsmi_tools});
+            this.tsmi_tools,
+            this.helpToolStripMenuItem});
             this.ms_Main.Location = new System.Drawing.Point(0, 0);
             this.ms_Main.Name = "ms_Main";
             this.ms_Main.Size = new System.Drawing.Size(1195, 24);
@@ -557,6 +560,21 @@ namespace BulkImportDelimitedFlatFiles
             this.lbl_warningIncremental.Size = new System.Drawing.Size(342, 15);
             this.lbl_warningIncremental.TabIndex = 35;
             // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -641,6 +659,8 @@ namespace BulkImportDelimitedFlatFiles
         private System.Windows.Forms.CheckBox chbox_tablePrefix;
         private System.Windows.Forms.TextBox txtbox_tablePrefix;
         private System.Windows.Forms.Label lbl_warningIncremental;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 
