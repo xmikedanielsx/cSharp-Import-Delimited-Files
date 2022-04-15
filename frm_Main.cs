@@ -34,6 +34,8 @@ namespace BulkImportDelimitedFlatFiles
         string appFile;
         string appFolder;
         string cfgJsonFile;
+        // The LVItem being dragged
+        private ListViewItem _itemDnD = null;
 
         public frm_Main()
         {
@@ -49,6 +51,14 @@ namespace BulkImportDelimitedFlatFiles
             btn_loadToSQL.Enabled = false;
             this.mainThread = Thread.CurrentThread;
             this.mainThread.Name = "Main Thread";
+            lv_fileList.MultiSelect = false;
+            ColumnHeader columnheader = new ColumnHeader();
+            columnheader.Text = "FileName";
+            lv_fileList.Columns.Add(columnheader);
+            ColumnHeader columnheader2 = new ColumnHeader();
+            columnheader2.Text = "Size";
+            lv_fileList.Columns.Add(columnheader2);
+            //lv_fileList.
         }
 
         private void setJsonObjectConfig()
@@ -105,10 +115,6 @@ namespace BulkImportDelimitedFlatFiles
             }
 
 
-
-
-
-
             if (this.cnn.State == ConnectionState.Open)
             {
                 this.cnn.Close();
@@ -160,6 +166,8 @@ namespace BulkImportDelimitedFlatFiles
                 lv_fileList.Items[0].Selected = true;
                 lv_fileList.Items[0].Focused = true;
             }
+
+            lv_fileList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             btn_loadFilesToList.Enabled = true;
             btn_loadFilesToList.Text = "Load Files";
             dgv_FieldList.Enabled = true;
@@ -194,7 +202,14 @@ namespace BulkImportDelimitedFlatFiles
                 {
                     // set file name variable
                     string fileName = fl.FullName.ToString();
-                    Invoke(new Action<string>(addFileToList), fileName);
+                    string fileSize = (string)Invoke(new Func<string, string>(getHumanReadableBytes), fileName);
+                    //MessageBox.Show(fileSize);
+                    string[] fileArr = new string[3];
+                    fileArr[0] = fileName;
+                    fileArr[1] = fileSize;
+                    ListViewItem nlvi = new ListViewItem(fileArr);
+                    
+                    Invoke(new Action<ListViewItem>(addFileToList), nlvi);
 
                     // Get the DataTable from the file
                     DataTable dtfl = (DataTable)Invoke(new Func<string, DataTable>(GetDataTableFromCSVFile), fileName);
@@ -207,7 +222,7 @@ namespace BulkImportDelimitedFlatFiles
                     // if the datatable is null then that means the CSV Extraction failed and we'll load it to failed files.
                     else
                     {
-                        Invoke(new Action<string>(addFailedFileToList), fileName);
+                        Invoke(new Action<ListViewItem>(addFailedFileToList), nlvi);
                     }
                 }
                 Invoke(new Action<object, EventArgs>(flComplete), new object[] { sender, e });
@@ -217,6 +232,33 @@ namespace BulkImportDelimitedFlatFiles
                 MessageBox.Show(ex.Message.ToString());
                 Invoke(new Action(updateButtonsAfterLoadFiles));
             }
+        }
+
+        public string getHumanReadableBytes(string filename)
+        {
+            double len = new FileInfo(filename).Length;
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (len == 0)
+                return "0" + suf[0];
+            
+            double bytes = (double)Math.Abs(Convert.ToDecimal(len));
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (string)(Math.Sign(len) * num).ToString() + " " + suf[place];
+
+            //string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            //double len = new FileInfo(filename).Length;
+            //int order = 0;
+            //while (len >= 1024 && order < sizes.Length - 1)
+            //{
+            //    order++;
+            //    len = len / 1024;
+            //}
+
+            //// Adjust the format string to your preferences. For example "{0:0.#}{1}" would
+            //// show a single decimal place, and no space.
+            //string result = String.Format("{0:0.##} {1}", len, sizes[order]);
+            //return result;
         }
         public void addAFileToLoad(string file, DataTable dt)
         {
@@ -257,14 +299,14 @@ namespace BulkImportDelimitedFlatFiles
         {
             lv_fileList.Items.Clear();
         }
-        public void addFileToList(string file)
+        public void addFileToList(ListViewItem nlvi)
         {
-            lv_fileList.Items.Add(file);
+            lv_fileList.Items.Add(nlvi);
         }
 
-        public void addFailedFileToList(string file)
+        public void addFailedFileToList(ListViewItem nlvi)
         {
-            lv_fileList.Items.Add(file).ForeColor = Color.Red;
+            lv_fileList.Items.Add(nlvi).ForeColor = Color.Red;
         }
 
         private void btn_loadFilesToList_Click(object sender, EventArgs e)
@@ -1036,6 +1078,108 @@ namespace BulkImportDelimitedFlatFiles
             //ibox.Top = (this.Top + this.Height) / 2;
 
             ibox.ShowDialog();
+        }
+
+        private void lv_fileList_MouseDown(object sender, MouseEventArgs e)
+        {
+            _itemDnD = lv_fileList.GetItemAt(e.X, e.Y);
+        }
+
+        private void lv_fileList_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_itemDnD == null)
+                return;
+
+            // Show the user that a drag operation is happening
+            Cursor = Cursors.Hand;
+
+            // calculate the bottom of the last item in the LV so that you don't have to stop your drag at the last item
+            int lastItemBottom = Math.Min(e.Y, lv_fileList.Items[lv_fileList.Items.Count - 1].GetBounds(ItemBoundsPortion.Entire).Bottom - 1);
+
+            // use 0 instead of e.X so that you don't have to keep inside the columns while dragging
+            ListViewItem itemOver = lv_fileList.GetItemAt(0, lastItemBottom);
+
+            if (itemOver == null)
+                return;
+
+            Rectangle rc = itemOver.GetBounds(ItemBoundsPortion.Entire);
+            if (e.Y < rc.Top + (rc.Height / 2))
+            {
+                lv_fileList.LineBefore = itemOver.Index;
+                lv_fileList.LineAfter = -1;
+            }
+            else
+            {
+                lv_fileList.LineBefore = -1;
+                lv_fileList.LineAfter = itemOver.Index;
+            }
+
+            // invalidate the LV so that the insertion line is shown
+            lv_fileList.Invalidate();
+        }
+
+        public void showFirstIndexLV()
+        {
+            //MessageBox.Show(lv_fileList.CheckedItems[0].Text.ToString());
+        }
+
+        private void lv_fileList_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_itemDnD == null)
+                return;
+
+            try
+            {
+                // calculate the bottom of the last item in the LV so that you don't have to stop your drag at the last item
+                int lastItemBottom = Math.Min(e.Y, lv_fileList.Items[lv_fileList.Items.Count - 1].GetBounds(ItemBoundsPortion.Entire).Bottom - 1);
+
+                // use 0 instead of e.X so that you don't have to keep inside the columns while dragging
+                ListViewItem itemOver = lv_fileList.GetItemAt(0, lastItemBottom);
+
+                if (itemOver == null)
+                    return;
+
+                Rectangle rc = itemOver.GetBounds(ItemBoundsPortion.Entire);
+
+                // find out if we insert before or after the item the mouse is over
+                bool insertBefore;
+                if (e.Y < rc.Top + (rc.Height / 2))
+                {
+                    insertBefore = true;
+                }
+                else
+                {
+                    insertBefore = false;
+                }
+
+                if (_itemDnD != itemOver) // if we dropped the item on itself, nothing is to be done
+                {
+                    if (insertBefore)
+                    {
+                        lv_fileList.Items.Remove(_itemDnD);
+                        lv_fileList.Items.Insert(itemOver.Index, _itemDnD);
+                    }
+                    else
+                    {
+                        lv_fileList.Items.Remove(_itemDnD);
+                        lv_fileList.Items.Insert(itemOver.Index + 1, _itemDnD);
+                    }
+                }
+
+                // clear the insertion line
+                lv_fileList.LineAfter =
+                lv_fileList.LineBefore = -1;
+
+                lv_fileList.Invalidate();
+
+            }
+            finally
+            {
+                // finish drag&drop operation
+                _itemDnD = null;
+                this.showFirstIndexLV();
+                Cursor = Cursors.Default;
+            }
         }
     }
     public static class Extension
