@@ -1070,7 +1070,7 @@ namespace BulkImportDelimitedFlatFiles
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string msg = @"Bulk Importer Tool" + Environment.NewLine + @"Build 1.0.1.8" + Environment.NewLine + Environment.NewLine + @"Contact: Mike Daniels (Git Hub)" + Environment.NewLine + Environment.NewLine + @"https://github.com/xmikedanielsx";
+            string msg = @"Bulk Importer Tool" + Environment.NewLine + @"Build 1.0.1.9" + Environment.NewLine + Environment.NewLine + @"Contact: Mike Daniels (Git Hub)" + Environment.NewLine + Environment.NewLine + @"https://github.com/xmikedanielsx";
             frm_infoBox ibox = new frm_infoBox();
             ibox.setMessage(Color.Black, msg);
             //ibox.Left = (this.Left + this.Width) / 2;
