@@ -309,7 +309,6 @@ namespace BulkImportDelimitedFlatFiles
                 return;
             }
             int fCount = this.lv_fileList.CheckedItems.Count;
-            int fCnt = 1;
             if (fCount == 0)
             {
                 MessageBox.Show("Sorry but you have not selected any files to Load. Please select the check box next to the files you wish to load.");
@@ -318,19 +317,30 @@ namespace BulkImportDelimitedFlatFiles
             this.ltDialog = new frm_loadStatus(txtbox_sqlServer.Text.ToString());
             ltDialog.Show();
             ltDialog.Text = @"Trying to get your latest incrementing table";
-            this.loadTablesToSQLServer(
-                    lv_fileList
-                    , chbox_tablePrefix.Checked
-                    , txtbox_tablePrefix.Text
-                    , txtbox_FinalTableName.Text
-                    , this.filesToLoad
-                    , chbox_DropTables.Checked
-                    , chbox_CreateAllTablesTable.Checked
-                    , this.filesToLoadMapping
-                    , this.appFolder
-                   ); ;
+            Thread ltsThread = new Thread(() => loadTablesToSQLServer(
+                chbox_tablePrefix.Checked
+                , txtbox_tablePrefix.Text
+                , txtbox_FinalTableName.Text
+                //, this.filesToLoad
+                , chbox_DropTables.Checked
+                , chbox_CreateAllTablesTable.Checked
+                , this.filesToLoadMapping
+                , this.appFolder
+            ));
+            ltsThread.Start();
+            //    this.loadTablesToSQLServer(
+            //            lv_fileList
+            //            , chbox_tablePrefix.Checked
+            //            , txtbox_tablePrefix.Text
+            //            , txtbox_FinalTableName.Text
+            //            , this.filesToLoad
+            //            , chbox_DropTables.Checked
+            //            , chbox_CreateAllTablesTable.Checked
+            //            , this.filesToLoadMapping
+            //            , this.appFolder
+            //           );
+            //}
         }
-
         public void updateSQLLoadDialogText (string stToLoad)
         {
             this.ltDialog.Text = stToLoad;
@@ -338,8 +348,9 @@ namespace BulkImportDelimitedFlatFiles
 
         public void updateStatusTextLoadSQL (Color clr, string stToLoad)
         {
-            lbl_loadFilesStatus.ForeColor = clr;
-            lbl_loadFilesStatus.Text = stToLoad;
+            this.lbl_loadFilesStatus.ForeColor = clr;
+            this.lbl_loadFilesStatus.Text = stToLoad;
+            this.lbl_loadFilesStatus.Visible = true;
         }
         
         public void updateSQLLoadProgress (decimal prg)
@@ -349,26 +360,54 @@ namespace BulkImportDelimitedFlatFiles
 
         public void finishedLoadingToSQLSteps ()
         {
-            btn_loadToSQL.Text = "Load To SQL";
-            btn_loadToSQL.Enabled = true;
-            btn_loadFilesToList.Enabled = true;
+            this.btn_loadToSQL.Text = "Load To SQL";
+            this.btn_loadToSQL.Enabled = true;
+            this.btn_loadFilesToList.Enabled = true;
+        }
+
+        public void showOkLTSButton ()
+        {
+            this.ltDialog.showOkButton();
+        }
+
+        public Dictionary<string, DataTable> getfilesToLoadDic ()
+        {
+            Dictionary<string, DataTable> ftld = new Dictionary<string, DataTable> ();
+            foreach (System.Collections.Generic.KeyValuePair<string, System.Data.DataTable> fl in this.filesToLoad)
+            {
+                ftld.Add(fl.Key, fl.Value);
+            }
+            return ftld;
+            
+        }
+
+        public List<ListViewItem> getLvFiles ()
+        {
+            List<ListViewItem> lv = new List<ListViewItem> ();
+            foreach(ListViewItem lvi in this.lv_fileList.CheckedItems)
+            {
+                lv.Add(lvi);
+            }
+            return lv;
         }
 
         // TODO: Need to add Checks for Drop Table and for Create Unioned Table
         // TODO: Need to add more validation
         private void loadTablesToSQLServer(
-            ListView filesLV
-            , Boolean useTablePrefix
+            Boolean useTablePrefix
             , string tblPrefix
             , string finalTblName
-            , Dictionary<string, DataTable> ftl
+            //, Dictionary<string, DataTable> ftl
             , Boolean DropTablesOrNot
             , Boolean CreateMasterTable
             , Dictionary<string, Dictionary<string, Dictionary<string, string>>> ftlm
             , string AppFolderLocation
             )
         {
-            int fCount = filesLV.CheckedItems.Count;
+            List<ListViewItem> filesLV = (List<ListViewItem>)Invoke(new Func<List<ListViewItem>>(getLvFiles));
+            Dictionary<string, DataTable> ftl = (Dictionary<string, DataTable>)Invoke(new Func<Dictionary<string, DataTable>>(getfilesToLoadDic));
+
+            int fCount = filesLV.Count;
             int fCnt = 1;
             
             string lastTableName;
@@ -427,7 +466,7 @@ namespace BulkImportDelimitedFlatFiles
             lastTableNumber = lastTableNumberOriginal;
             
             Boolean errorsHappened = false;
-            foreach (ListViewItem lii in filesLV.CheckedItems)
+            foreach (ListViewItem lii in filesLV)
             {
                 Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] { Color.Black, @"Loading your files..." });
                 DataTable dtToLoad;
@@ -436,6 +475,7 @@ namespace BulkImportDelimitedFlatFiles
                 string tNameToInsert = useTablePrefix ? tablePrefix + lastTableNumber.ToString().PadLeft(3, '0') : fName;
 
                 Invoke(new Action<string>(updateSQLLoadDialogText), "Loading Table " + tNameToInsert);
+                Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] { Color.Black, @"Uploading " + fName });
 
                 Invoke(new Action<decimal>(updateSQLLoadProgress), new object[] { currentProg });
                 
@@ -514,9 +554,9 @@ namespace BulkImportDelimitedFlatFiles
             if (CreateMasterTable == false)
             {
                 Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] { errorsHappened ? Color.Red : Color.Black, errorsHappened ? @"We loaded the tables we could, but had some errors" : @"Your Tables have Been Loaded " });
-                ltDialog.setLoadStatus(new decimal(100));
-                ltDialog.showOkButton();
-                btn_loadToSQL.Enabled = false;
+                Invoke(new Action<String>(updateSQLLoadDialogText), new object[] { errorsHappened ? @"Finished (With Errors)" : @"Finished Loading " });
+                Invoke(new Action<decimal>(updateSQLLoadProgress), new object[] { new decimal(100) });
+                Invoke(new Action(finishedLoadingToSQLSteps));
                 return;
             }
 
@@ -532,9 +572,8 @@ namespace BulkImportDelimitedFlatFiles
                 string finalTable = finalTblName.ToString();
                 try
                 {
-                    decimal lstat = new decimal(90);
-                    ltDialog.setLoadStatus(lstat);
-                    ltDialog.setLoadingText("Trying to create your Unioned Table \"" + finalTblName.ToString() + " \"");
+                    Invoke(new Action<decimal>(updateSQLLoadProgress), new object[] { new decimal(90) });
+                    Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] { Color.Black, "Trying to create your Unioned Table \"" + finalTblName.ToString() + " \"" });
 
                     if (DropTablesOrNot == true)
                     {
@@ -561,6 +600,9 @@ namespace BulkImportDelimitedFlatFiles
                 {
                     MessageBox.Show(ex.Message.ToString());
                     cnn.Close();
+                    Invoke(new Action<decimal>(updateSQLLoadProgress), new object[] { new decimal(100) });
+                    Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] {Color.Black, "Completed (With Errors)"});
+                    Invoke(new Action(finishedLoadingToSQLSteps));
                     return;
                 }
 
@@ -576,9 +618,9 @@ namespace BulkImportDelimitedFlatFiles
                     qToUnion += useTablePrefix ? @"
                     INSERT INTO @tvalues (tbl, srcFile) VALUES " : @"
                     INSERT INTO @tvalues(tbl) VALUES ";
-                    int itemsAddedCount = filesLV.CheckedItems.Count;
+                    int itemsAddedCount = filesLV.Count;
                     int itemsAddedCounter = 1;
-                    foreach (ListViewItem lii in filesLV.CheckedItems)
+                    foreach (ListViewItem lii in filesLV)
                     {
                         FileInfo fl = FileSystem.GetFileInfo(lii.Text.ToString());
                         string fName = fl.Name.ToString().Replace(".txt", "").Replace(".csv", "");
@@ -619,14 +661,14 @@ namespace BulkImportDelimitedFlatFiles
                     //cmd4.Dispose();
 
                     Invoke(new Action<Color, String>(updateStatusTextLoadSQL), new object[] { Color.Black, @"You Now Have A New Table " + Environment.NewLine + nTName });
-                    ltDialog.setLoadingText(@"You Now Have A New Table " + Environment.NewLine + nTName);
                     Invoke(new Action<decimal>(updateSQLLoadProgress), new object[] { new decimal(100) });
-                    ltDialog.showOkButton();
+                    
                 }
                 catch (Exception em)
                 {
                     MessageBox.Show(em.Message.ToString());
-                    ltDialog.showCancelButton();
+                    Invoke(new Action(showOkLTSButton));
+                    Invoke(new Action(finishedLoadingToSQLSteps));
                 }
 
             }
