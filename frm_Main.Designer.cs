@@ -54,6 +54,9 @@ namespace BulkImportDelimitedFlatFiles
             this.lbl_delimiterLbl = new System.Windows.Forms.Label();
             this.sc_innerContainer = new System.Windows.Forms.SplitContainer();
             this.lv_fileList = new ListViewCustomReorder.ListViewEx();
+            this.columnheader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnheader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnheader3 = new System.Windows.Forms.ColumnHeader();
             this.dgv_FieldList = new System.Windows.Forms.DataGridView();
             this.index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.fieldName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -343,31 +346,45 @@ namespace BulkImportDelimitedFlatFiles
             this.sc_innerContainer.SplitterDistance = 677;
             this.sc_innerContainer.TabIndex = 34;
             // 
+            // columnheader1
+            // 
+            this.columnheader1.Text = "FileName";
+            // 
+            // columnheader2
+            // 
+            this.columnheader2.Text = "Size";
+            // 
+            // columnheader2
+            // 
+            this.columnheader3.Text = "Byte Size";
+            // 
             // lv_fileList
             // 
-            /* Custom Attributes */
             this.lv_fileList.AllowDrop = true;
-            this.lv_fileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lv_fileList.CheckBoxes = true;
+            this.lv_fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnheader1,
+            this.columnheader2,
+            this.columnheader3
+            });
+            this.lv_fileList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lv_fileList.FullRowSelect = true;
+            this.lv_fileList.HideSelection = false;
             this.lv_fileList.LineAfter = -1;
             this.lv_fileList.LineBefore = -1;
-
-            /* Normal Attributes */
-            this.lv_fileList.CheckBoxes = true;
-            this.lv_fileList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lv_fileList.HideSelection = false;
             this.lv_fileList.Location = new System.Drawing.Point(0, 0);
+            this.lv_fileList.MultiSelect = false;
             this.lv_fileList.Name = "lv_fileList";
             this.lv_fileList.Size = new System.Drawing.Size(675, 485);
             this.lv_fileList.TabIndex = 32;
             this.lv_fileList.UseCompatibleStateImageBehavior = false;
             this.lv_fileList.View = System.Windows.Forms.View.Details;
+            this.lv_fileList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lv_fileList_ColumnClick);
             this.lv_fileList.SelectedIndexChanged += new System.EventHandler(this.cbl_fileList_SelectedIndexChanged);
             this.lv_fileList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseDown);
             this.lv_fileList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseMove);
             this.lv_fileList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseUp);
+          
             // 
             // dgv_FieldList
             // 
@@ -626,6 +643,9 @@ namespace BulkImportDelimitedFlatFiles
         }
 
         #endregion
+        private System.Windows.Forms.ColumnHeader columnheader1;
+        private System.Windows.Forms.ColumnHeader columnheader2;
+        private System.Windows.Forms.ColumnHeader columnheader3;
         private System.Windows.Forms.Button btn_testConnection;
         private System.Windows.Forms.Label lbl_filePickUpPath;
         private System.Windows.Forms.TextBox txtbox_pickUpPath;

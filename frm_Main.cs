@@ -14,6 +14,8 @@ using Microsoft.VisualBasic.FileIO;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections;
+using System.Globalization;
 
 namespace BulkImportDelimitedFlatFiles
 {
@@ -36,6 +38,7 @@ namespace BulkImportDelimitedFlatFiles
         string cfgJsonFile;
         // The LVItem being dragged
         private ListViewItem _itemDnD = null;
+        ColumnSorter m_lstColumnSorter = new ColumnSorter();
 
         public frm_Main()
         {
@@ -51,13 +54,8 @@ namespace BulkImportDelimitedFlatFiles
             btn_loadToSQL.Enabled = false;
             this.mainThread = Thread.CurrentThread;
             this.mainThread.Name = "Main Thread";
-            lv_fileList.MultiSelect = false;
-            ColumnHeader columnheader = new ColumnHeader();
-            columnheader.Text = "FileName";
-            lv_fileList.Columns.Add(columnheader);
-            ColumnHeader columnheader2 = new ColumnHeader();
-            columnheader2.Text = "Size";
-            lv_fileList.Columns.Add(columnheader2);
+            lv_fileList.ListViewItemSorter = m_lstColumnSorter;
+
             //lv_fileList.
         }
 
@@ -204,9 +202,10 @@ namespace BulkImportDelimitedFlatFiles
                     string fileName = fl.FullName.ToString();
                     string fileSize = (string)Invoke(new Func<string, string>(getHumanReadableBytes), fileName);
                     //MessageBox.Show(fileSize);
-                    string[] fileArr = new string[3];
+                    string[] fileArr = new string[4];
                     fileArr[0] = fileName;
                     fileArr[1] = fileSize;
+                    fileArr[2] = fl.Length.ToString();
                     ListViewItem nlvi = new ListViewItem(fileArr);
                     
                     Invoke(new Action<ListViewItem>(addFileToList), nlvi);
@@ -1181,7 +1180,151 @@ namespace BulkImportDelimitedFlatFiles
                 Cursor = Cursors.Default;
             }
         }
+
+        private void lv_fileList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            //MessageBox.Show(lv_fileList.Sorting.ToString());
+            
+
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == m_lstColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (m_lstColumnSorter.Order == System.Windows.Forms.SortOrder.Ascending)
+                {
+                    m_lstColumnSorter.Order = System.Windows.Forms.SortOrder.Descending;
+                }
+                else
+                {
+                    m_lstColumnSorter.Order = System.Windows.Forms.SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                m_lstColumnSorter.SortColumn = e.Column;
+                m_lstColumnSorter.Order = System.Windows.Forms.SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            lv_fileList.Sort();
+            lv_fileList.SetSortIcon(m_lstColumnSorter.SortColumn, m_lstColumnSorter.Order);
+        }
     }
+
+    //class ListViewItemComparer : IComparer
+    //{
+    //    private int col;
+    //    public ListViewItemComparer()
+    //    {
+    //        col = 0;
+    //    }
+    //    public ListViewItemComparer(int column)
+    //    {
+    //        col = column;
+    //    }
+    //    public int Compare(object x, object y)
+    //    {
+    //        // 	somestring.Substring(somestring.Length-nCount,nCount)
+    //        int cntOfPad = 20;
+    //        string str1 = ((ListViewItem)x).SubItems[col].Text;
+    //        string str2 = ((ListViewItem)y).SubItems[col].Text;
+    //        if(int.TryParse(str1, out int result) && int.TryParse(str2, out int result1))
+    //        {
+    //            str1 = str1.Substring(str1.PadLeft(cntOfPad, '0').Length - cntOfPad, cntOfPad);
+    //            str2 = str2.Substring(str2.PadLeft(cntOfPad, '0').Length - cntOfPad, cntOfPad);
+    //        }
+
+    //        return String.Compare(str1, str2);
+
+
+    //    }
+    //}
+    public class ColumnSorter : IComparer
+    {
+        private int sortColumn;
+
+        public int SortColumn
+        {
+            set { sortColumn = value; }
+            get { return sortColumn; }
+        }
+
+        private System.Windows.Forms.SortOrder sortOrder;
+
+        public System.Windows.Forms.SortOrder Order
+        {
+            set { sortOrder = value; }
+            get { return sortOrder; }
+        }
+
+        private Comparer listViewItemComparer;
+
+        public ColumnSorter()
+        {
+            sortColumn = 0;
+
+            sortOrder = System.Windows.Forms.SortOrder.None;
+
+            listViewItemComparer = new Comparer(CultureInfo.CurrentUICulture);
+        }
+
+        /// <summary>
+        /// This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
+        /// </summary>
+        /// <param name="x">First object to be compared</param>
+        /// <param name="y">Second object to be compared</param>
+        /// <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
+        public int Compare(object x, object y)
+        {
+            try
+            {
+                ListViewItem lviX = (ListViewItem)x;
+                ListViewItem lviY = (ListViewItem)y;
+                int cntOfPad = 20;
+                string str1 = lviX.SubItems[sortColumn].Text;
+                string str2 = lviY.SubItems[sortColumn].Text;
+                str1 = str1.PadLeft(cntOfPad, '0');
+                str2 = str2.PadLeft(cntOfPad, '0');
+                if (int.TryParse(str1, out int result) && int.TryParse(str2, out int result1))
+                {
+                    str1 = str1.Substring(str1.Length - cntOfPad, cntOfPad);
+                    str2 = str2.Substring(str2.Length - cntOfPad, cntOfPad);
+                }
+
+                int compareResult = 0;
+
+                if (lviX.SubItems[sortColumn].Tag != null && lviY.SubItems[sortColumn].Tag != null)
+                {
+                    compareResult = listViewItemComparer.Compare(lviX.SubItems[sortColumn].Tag, lviY.SubItems[sortColumn].Tag);
+                }
+                else
+                {
+                    compareResult = listViewItemComparer.Compare(str1, str2);
+                    //compareResult = listViewItemComparer.Compare(lviX.SubItems[sortColumn].Text, lviY.SubItems[sortColumn].Text);
+                }
+
+                if (sortOrder == System.Windows.Forms.SortOrder.Ascending)
+                {
+                    return compareResult;
+                }
+                else if (sortOrder == System.Windows.Forms.SortOrder.Descending)
+                {
+                    return (-compareResult);
+                }
+                else
+                {
+                    return 0;
+                }
+
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+    }
+
     public static class Extension
     {
         public static int SelectedIndex(this ListView listView)
@@ -1197,5 +1340,99 @@ namespace BulkImportDelimitedFlatFiles
     {
         public string tableName { get; set; }
         public string tablePrefix { get; set; }
+    }
+
+    internal static class ListViewExtensions
+    {
+        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+        public struct LVCOLUMN
+        {
+            public Int32 mask;
+            public Int32 cx;
+            [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPTStr)]
+            public string pszText;
+            public IntPtr hbm;
+            public Int32 cchTextMax;
+            public Int32 fmt;
+            public Int32 iSubItem;
+            public Int32 iImage;
+            public Int32 iOrder;
+        }
+
+        const Int32 HDI_WIDTH = 0x0001;
+        const Int32 HDI_HEIGHT = HDI_WIDTH;
+        const Int32 HDI_TEXT = 0x0002;
+        const Int32 HDI_FORMAT = 0x0004;
+        const Int32 HDI_LPARAM = 0x0008;
+        const Int32 HDI_BITMAP = 0x0010;
+        const Int32 HDI_IMAGE = 0x0020;
+        const Int32 HDI_DI_SETITEM = 0x0040;
+        const Int32 HDI_ORDER = 0x0080;
+        const Int32 HDI_FILTER = 0x0100;
+
+        const Int32 HDF_LEFT = 0x0000;
+        const Int32 HDF_RIGHT = 0x0001;
+        const Int32 HDF_CENTER = 0x0002;
+        const Int32 HDF_JUSTIFYMASK = 0x0003;
+        const Int32 HDF_RTLREADING = 0x0004;
+        const Int32 HDF_OWNERDRAW = 0x8000;
+        const Int32 HDF_STRING = 0x4000;
+        const Int32 HDF_BITMAP = 0x2000;
+        const Int32 HDF_BITMAP_ON_RIGHT = 0x1000;
+        const Int32 HDF_IMAGE = 0x0800;
+        const Int32 HDF_SORTUP = 0x0400;
+        const Int32 HDF_SORTDOWN = 0x0200;
+
+        const Int32 LVM_FIRST = 0x1000;         // List messages
+        const Int32 LVM_GETHEADER = LVM_FIRST + 31;
+        const Int32 HDM_FIRST = 0x1200;         // Header messages
+        const Int32 HDM_SETIMAGELIST = HDM_FIRST + 8;
+        const Int32 HDM_GETIMAGELIST = HDM_FIRST + 9;
+        const Int32 HDM_GETITEM = HDM_FIRST + 11;
+        const Int32 HDM_SETITEM = HDM_FIRST + 12;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern IntPtr SendMessageLVCOLUMN(IntPtr hWnd, Int32 Msg, IntPtr wParam, ref LVCOLUMN lPLVCOLUMN);
+
+
+        //This method used to set arrow icon
+        public static void SetSortIcon(this ListView listView, int columnIndex, System.Windows.Forms.SortOrder order)
+        {
+            IntPtr columnHeader = SendMessage(listView.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+
+            for (int columnNumber = 0; columnNumber <= listView.Columns.Count - 1; columnNumber++)
+            {
+                IntPtr columnPtr = new IntPtr(columnNumber);
+                LVCOLUMN lvColumn = new LVCOLUMN();
+                lvColumn.mask = HDI_FORMAT;
+
+                SendMessageLVCOLUMN(columnHeader, HDM_GETITEM, columnPtr, ref lvColumn);
+
+                if (!(order == System.Windows.Forms.SortOrder.None) && columnNumber == columnIndex)
+                {
+                    switch (order)
+                    {
+                        case System.Windows.Forms.SortOrder.Ascending:
+                            lvColumn.fmt &= ~HDF_SORTDOWN;
+                            lvColumn.fmt |= HDF_SORTUP;
+                            break;
+                        case System.Windows.Forms.SortOrder.Descending:
+                            lvColumn.fmt &= ~HDF_SORTUP;
+                            lvColumn.fmt |= HDF_SORTDOWN;
+                            break;
+                    }
+                    lvColumn.fmt |= (HDF_LEFT | HDF_BITMAP_ON_RIGHT);
+                }
+                else
+                {
+                    lvColumn.fmt &= ~HDF_SORTDOWN & ~HDF_SORTUP & ~HDF_BITMAP_ON_RIGHT;
+                }
+
+                SendMessageLVCOLUMN(columnHeader, HDM_SETITEM, columnPtr, ref lvColumn);
+            }
+        }
     }
 }
