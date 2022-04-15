@@ -58,6 +58,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label3.Text" xml:space="preserve">
-    <value>This tool allows you to connect to excel files without having excel installed and extract the tabular data in each worksheet to individual csv files (tab delimited).  Please note that with unexpected non conforming tabular data, there could be odd results. Please confirm your delimited files before trying to import them into your SQL Database</value>
+    <value>Welcome, to the Excel to CSV Tool. This tool will take Normal Excel Tabular Data and Convert it to CSV files for you. Please note this tool iterates though all of your worksheets in each workbook that you point it to. Please make sure all worksheets in the workbook are clean and do not contian non tabular data.
+
+New Feature: Custom Output Delimiter</value>
   </data>
 </root>

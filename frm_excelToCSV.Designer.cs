@@ -38,11 +38,13 @@ namespace BulkImportDelimitedFlatFiles
             this.btn_convertExceltoCSV = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.lbl_fileLoadStatus = new System.Windows.Forms.Label();
+            this.cmbox_delimiter = new System.Windows.Forms.ComboBox();
+            this.lbl_selectedDelimiter = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(14, 77);
+            this.label1.Location = new System.Drawing.Point(15, 99);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(135, 23);
             this.label1.TabIndex = 0;
@@ -51,7 +53,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(14, 111);
+            this.label2.Location = new System.Drawing.Point(15, 133);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(135, 23);
             this.label2.TabIndex = 1;
@@ -60,21 +62,21 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_excelFolder
             // 
-            this.txtbox_excelFolder.Location = new System.Drawing.Point(155, 77);
+            this.txtbox_excelFolder.Location = new System.Drawing.Point(156, 99);
             this.txtbox_excelFolder.Name = "txtbox_excelFolder";
             this.txtbox_excelFolder.Size = new System.Drawing.Size(574, 23);
             this.txtbox_excelFolder.TabIndex = 2;
             // 
             // txtbox_csvFolder
             // 
-            this.txtbox_csvFolder.Location = new System.Drawing.Point(155, 111);
+            this.txtbox_csvFolder.Location = new System.Drawing.Point(156, 133);
             this.txtbox_csvFolder.Name = "txtbox_csvFolder";
             this.txtbox_csvFolder.Size = new System.Drawing.Size(574, 23);
             this.txtbox_csvFolder.TabIndex = 3;
             // 
             // btn_excelPickUp
             // 
-            this.btn_excelPickUp.Location = new System.Drawing.Point(735, 77);
+            this.btn_excelPickUp.Location = new System.Drawing.Point(736, 99);
             this.btn_excelPickUp.Name = "btn_excelPickUp";
             this.btn_excelPickUp.Size = new System.Drawing.Size(34, 23);
             this.btn_excelPickUp.TabIndex = 4;
@@ -84,7 +86,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_csvDropOff
             // 
-            this.btn_csvDropOff.Location = new System.Drawing.Point(735, 111);
+            this.btn_csvDropOff.Location = new System.Drawing.Point(736, 133);
             this.btn_csvDropOff.Name = "btn_csvDropOff";
             this.btn_csvDropOff.Size = new System.Drawing.Size(34, 23);
             this.btn_csvDropOff.TabIndex = 5;
@@ -94,7 +96,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_convertExceltoCSV
             // 
-            this.btn_convertExceltoCSV.Location = new System.Drawing.Point(702, 159);
+            this.btn_convertExceltoCSV.Location = new System.Drawing.Point(703, 181);
             this.btn_convertExceltoCSV.Name = "btn_convertExceltoCSV";
             this.btn_convertExceltoCSV.Size = new System.Drawing.Size(73, 26);
             this.btn_convertExceltoCSV.TabIndex = 6;
@@ -106,24 +108,48 @@ namespace BulkImportDelimitedFlatFiles
             // 
             this.label3.Location = new System.Drawing.Point(22, 9);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(745, 47);
+            this.label3.Size = new System.Drawing.Size(745, 87);
             this.label3.TabIndex = 7;
             this.label3.Text = resources.GetString("label3.Text");
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // lbl_fileLoadStatus
             // 
-            this.lbl_fileLoadStatus.Location = new System.Drawing.Point(155, 137);
+            this.lbl_fileLoadStatus.Location = new System.Drawing.Point(156, 159);
             this.lbl_fileLoadStatus.Name = "lbl_fileLoadStatus";
             this.lbl_fileLoadStatus.Size = new System.Drawing.Size(620, 23);
             this.lbl_fileLoadStatus.TabIndex = 8;
             this.lbl_fileLoadStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // cmbox_delimiter
+            // 
+            this.cmbox_delimiter.FormattingEnabled = true;
+            this.cmbox_delimiter.Items.AddRange(new object[] {
+            "Tab",
+            "Comma",
+            "Semi-Colon",
+            "Pipe"});
+            this.cmbox_delimiter.Location = new System.Drawing.Point(586, 185);
+            this.cmbox_delimiter.Name = "cmbox_delimiter";
+            this.cmbox_delimiter.Size = new System.Drawing.Size(97, 23);
+            this.cmbox_delimiter.TabIndex = 38;
+            // 
+            // lbl_selectedDelimiter
+            // 
+            this.lbl_selectedDelimiter.Location = new System.Drawing.Point(445, 185);
+            this.lbl_selectedDelimiter.Name = "lbl_selectedDelimiter";
+            this.lbl_selectedDelimiter.Size = new System.Drawing.Size(135, 23);
+            this.lbl_selectedDelimiter.TabIndex = 39;
+            this.lbl_selectedDelimiter.Text = "Delimiter";
+            this.lbl_selectedDelimiter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // frm_excelToCSV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(787, 197);
+            this.ClientSize = new System.Drawing.Size(787, 219);
+            this.Controls.Add(this.lbl_selectedDelimiter);
+            this.Controls.Add(this.cmbox_delimiter);
             this.Controls.Add(this.lbl_fileLoadStatus);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btn_convertExceltoCSV);
@@ -154,5 +180,7 @@ namespace BulkImportDelimitedFlatFiles
         private System.Windows.Forms.Button btn_convertExceltoCSV;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lbl_fileLoadStatus;
+        private System.Windows.Forms.ComboBox cmbox_delimiter;
+        private System.Windows.Forms.Label lbl_selectedDelimiter;
     }
 }
