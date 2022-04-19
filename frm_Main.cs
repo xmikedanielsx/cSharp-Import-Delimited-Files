@@ -32,13 +32,13 @@ namespace BulkImportDelimitedFlatFiles
         Dictionary<string, Dictionary<string, Dictionary<string, string>>> filesToLoadMapping = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
         Boolean fileListLoaded = false;
         LocalConfig lconfig;
-        Thread mainThread;
         string appFile;
         string appFolder;
         string cfgJsonFile;
         // The LVItem being dragged
         private ListViewItem _itemDnD = null;
         ColumnSorter m_lstColumnSorter = new ColumnSorter();
+        parseFile pf;
 
         public frm_Main()
         {
@@ -52,8 +52,6 @@ namespace BulkImportDelimitedFlatFiles
             this.cfgJsonFile = appFolder + @"config.json";
             this.setJsonObjectConfig();
             btn_loadToSQL.Enabled = false;
-            this.mainThread = Thread.CurrentThread;
-            this.mainThread.Name = "Main Thread";
             lv_fileList.ListViewItemSorter = m_lstColumnSorter;
 
             //lv_fileList.
@@ -150,16 +148,72 @@ namespace BulkImportDelimitedFlatFiles
 
         }
 
-        public void flComplete(object sender, EventArgs e)
+        public void addAFileToLoad(string file, DataTable dt)
         {
+            this.filesToLoad.Add(file, dt);
+        }
+        public void addAFailedFileToLoad(string file, DataTable dt)
+        {
+            this.filesToLoad.Add(file, dt);
+        }
+
+        public void addFileToList(string fileName)
+        {
+            getFileDetails gd = new getFileDetails(fileName);
+            ListViewItem nlvi = new ListViewItem(gd.createFileArray());
+            this.lv_fileList.Items.Add(nlvi);
+            MessageBox.Show(this.lv_fileList.Items.Count.ToString());
+        }
+
+        public void addFailedFileToList(string failedFile)
+        {
+            getFileDetails gd = new getFileDetails(failedFile);
+            ListViewItem nlvi = new ListViewItem(gd.createFileArray());
+            lv_fileList.Items.Add(nlvi).ForeColor = Color.Red;
+            MessageBox.Show(lv_fileList.Items.Count.ToString());
+        }
+
+        private async void btn_loadFilesToList_Click(object sender, EventArgs e)
+        {
+            /*
+             *  VALIDATION STUFF
+             */
+            this.hasFileLoadError = 0;
+
+            
+            if (txtbox_pickUpPath.Text.ToString() == "" || Directory.Exists(txtbox_pickUpPath.Text.ToString()) == false)
+            {
+                MessageBox.Show("I am sorry your folder path is either blank or does not exist");
+                this.hasFileLoadError = 1;
+                return;
+            }
+
+            /*
+             * Clear Files List
+             */
+            lv_fileList.Items.Clear();
+            dgv_FieldList.Rows.Clear();
+
+            string filesPath = txtbox_pickUpPath.Text.ToString();
+
+            pf = new parseFile(filesPath, cmbox_delimiter.SelectedItem.ToString());
+
+            btn_loadFilesToList.Enabled = false;
+            btn_loadFilesToList.Text = "Loading...";
+
+            await Task.Run(() => pf.ldFiles());
+
             this.fileListLoaded = true;
 
+            // SHOULD BE Counted. But doesn't work.
+            MessageBox.Show(this.lv_fileList.Items.Count.ToString());
             foreach (ListViewItem lv in lv_fileList.Items)
             {
                 this.updateFileMapping(sender, e, lv.Index);
+                
                 lv_fileList.Items[lv.Index].Checked = true;
             }
-            if (lv_fileList.Items[0] != null)
+            if (lv_fileList.Items.Count != 0)
             {
                 lv_fileList.Items[0].Selected = true;
                 lv_fileList.Items[0].Focused = true;
@@ -171,167 +225,10 @@ namespace BulkImportDelimitedFlatFiles
             dgv_FieldList.Enabled = true;
             lv_fileList.Enabled = true;
             btn_loadToSQL.Enabled = true;
-        }
-
-        public void ldFiles(DirectoryInfo di, object sender, EventArgs e)
-        {
-            //MessageBox.Show("Made it to the func");
-            try
-            {
-
-                string[] extensions = new[] { ".txt", ".csv" };
-
-                // CLEAR Files If the list is not empty
-                Invoke(new Action(clearFileList));
-                Invoke(new Action(clearFileList));
-
-                // create local thread object to store the files
-                FileInfo[] tfiles;
-                tfiles = di.EnumerateFiles().Where(f => extensions.Contains(f.Extension.ToLower())).ToArray();
-
-                // Update parent object with the file list from the child thread -- this is safe because it should only be ran once due to button being disabled
-                Invoke(new Action<FileInfo[]>(updateFileListObject), new object[] { tfiles });
-
-                // Create new local thread objec to hold files to load
-                Dictionary<string, DataTable> ftLoad = new Dictionary<string, DataTable>();
-                Invoke(new Action(updateFilesToLoad));
-                List<string> failedFiles = new List<string>();
-                foreach (FileInfo fl in tfiles)
-                {
-                    // set file name variable
-                    string fileName = fl.FullName.ToString();
-                    string fileSize = (string)Invoke(new Func<string, string>(getHumanReadableBytes), fileName);
-                    //MessageBox.Show(fileSize);
-                    string[] fileArr = new string[4];
-                    fileArr[0] = fileName;
-                    fileArr[1] = fileSize;
-                    fileArr[2] = fl.Length.ToString();
-                    ListViewItem nlvi = new ListViewItem(fileArr);
-                    
-                    Invoke(new Action<ListViewItem>(addFileToList), nlvi);
-
-                    // Get the DataTable from the file
-                    DataTable dtfl = (DataTable)Invoke(new Func<string, DataTable>(GetDataTableFromCSVFile), fileName);
-
-                    // if the datatable is not null then add the data file to the list of files loaded
-                    if (dtfl != null)
-                    {
-                        Invoke(new Action<string, DataTable>(addAFileToLoad), new object[] { fileName, dtfl });
-                    }
-                    // if the datatable is null then that means the CSV Extraction failed and we'll load it to failed files.
-                    else
-                    {
-                        Invoke(new Action<ListViewItem>(addFailedFileToList), nlvi);
-                    }
-                }
-                Invoke(new Action<object, EventArgs>(flComplete), new object[] { sender, e });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-                Invoke(new Action(updateButtonsAfterLoadFiles));
-            }
-        }
-
-        public string getHumanReadableBytes(string filename)
-        {
-            double len = new FileInfo(filename).Length;
-            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
-            if (len == 0)
-                return "0" + suf[0];
-            
-            double bytes = (double)Math.Abs(Convert.ToDecimal(len));
-            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return (string)(Math.Sign(len) * num).ToString() + " " + suf[place];
-
-            //string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            //double len = new FileInfo(filename).Length;
-            //int order = 0;
-            //while (len >= 1024 && order < sizes.Length - 1)
-            //{
-            //    order++;
-            //    len = len / 1024;
-            //}
-
-            //// Adjust the format string to your preferences. For example "{0:0.#}{1}" would
-            //// show a single decimal place, and no space.
-            //string result = String.Format("{0:0.##} {1}", len, sizes[order]);
-            //return result;
-        }
-        public void addAFileToLoad(string file, DataTable dt)
-        {
-            this.filesToLoad.Add(file, dt);
-        }
-        public void addAFailedFileToLoad(string file, DataTable dt)
-        {
-            this.filesToLoad.Add(file, dt);
-        }
-
-        public void updateButtonsAfterLoadFiles()
-        {
-            btn_loadFilesToList.Enabled = true;
-            dgv_FieldList.Enabled = false;
-        }
-
-        public void updateFilesToLoad()
-        {
-            if (filesToLoad != null)
-            {
-                filesToLoad.Clear();
-            }
-        }
-
-        public void updateFileListObject(FileInfo[] fltu)
-        {
-            files = fltu;
-        }
-        public void clearFileList()
-        {
-            if (files != null)
-            {
-                Array.Clear(files, 0, files.Length);
-            }
-        }
-
-        public void clearLVFiles()
-        {
-            lv_fileList.Items.Clear();
-        }
-        public void addFileToList(ListViewItem nlvi)
-        {
-            lv_fileList.Items.Add(nlvi);
-        }
-
-        public void addFailedFileToList(ListViewItem nlvi)
-        {
-            lv_fileList.Items.Add(nlvi).ForeColor = Color.Red;
-        }
-
-        private void btn_loadFilesToList_Click(object sender, EventArgs e)
-        {
-            /*
-             *  VALIDATION STUFF
-             */
-            this.hasFileLoadError = 0;
-            lv_fileList.Items.Clear();
-            dgv_FieldList.Rows.Clear();
-            //this.btn_testConnection_Click(sender, e);
-            
-            if (txtbox_pickUpPath.Text.ToString() == "" || Directory.Exists(txtbox_pickUpPath.Text.ToString()) == false)
-            {
-                MessageBox.Show("I am sorry your folder path is either blank or does not exist");
-                this.hasFileLoadError = 1;
-            }
-            var filesNullOrNot = (files != null);
-            var filesToLoadIsNull = (filesToLoad != null);
 
 
-            btn_loadFilesToList.Enabled = false;
-            btn_loadFilesToList.Text = "Loading...";
-
-            Thread lfThread = new Thread(() => ldFiles(new DirectoryInfo(txtbox_pickUpPath.Text.ToString()), sender, e));
-            lfThread.Start();
+            //Thread lfThread = new Thread(() => ldFiles(new DirectoryInfo(), sender, e));
+            //lfThread.Start();
             //Task.Factory.StartNew(/*(*/) => );
             // public void ldFiles (string puPath,FileInfo[] tfiles, ListView lvfiles, Dictionary<string, DataTable> ftLoad, DataGridView dgvfl )
         }
@@ -710,67 +607,7 @@ namespace BulkImportDelimitedFlatFiles
             
         }
 
-        private DataTable GetDataTableFromCSVFile(string csv_file_path)
-        {
-
-            DataTable csvData = new DataTable();
-            try
-            {
-                using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
-                {
-                    string[] dv;
-                    List<string> dl = new List<string>();
-                    switch (cmbox_delimiter.Text.ToString())
-                    {
-                        case "Tab":
-                            dl.Add("\t");
-                            break;
-                        case "Comma":
-                            dl.Add(",");
-                            break;
-                        case "Semi-Colon":
-                            dl.Add(";");
-                            break;
-                        case "Pipe":
-                            dl.Add("|");
-                            break;
-                        default:
-                            dl.Add("\t");
-                            break;
-                    }
-                    dv = dl.ToArray();
-                    //MessageBox.Show(dv);
-                    csvReader.SetDelimiters(dv);
-                    csvReader.HasFieldsEnclosedInQuotes = true;
-                    string[] colFields = csvReader.ReadFields();
-                    foreach (string column in colFields)
-                    {
-                        DataColumn datecolumn = new DataColumn(column);
-                        datecolumn.AllowDBNull = true;
-                        csvData.Columns.Add(datecolumn);
-                    }
-                    while (!csvReader.EndOfData)
-                    {
-                        string[] fieldData = csvReader.ReadFields();
-                        //Making empty value as null
-                        for (int i = 0; i < fieldData.Length; i++)
-                        {
-                            if (fieldData[i] == "")
-                            {
-                                fieldData[i] = null;
-                            }
-                        }
-                        csvData.Rows.Add(fieldData);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-                return null;
-            }
-            return csvData;
-        }
+        
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
@@ -1434,5 +1271,11 @@ namespace BulkImportDelimitedFlatFiles
                 SendMessageLVCOLUMN(columnHeader, HDM_SETITEM, columnPtr, ref lvColumn);
             }
         }
+    }
+
+    public interface subClass
+    {
+       ListViewCustomReorder.ListViewEx lv_fileList { set; get; }
+        void addFileToList(string fileName);
     }
 }
