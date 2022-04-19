@@ -194,14 +194,15 @@ namespace BulkImportDelimitedFlatFiles
             lv_fileList.Items.Clear();
             dgv_FieldList.Rows.Clear();
 
-            string filesPath = txtbox_pickUpPath.Text.ToString();
+            string filesPath = txtbox_pickUpPath.Text;
+            string fileDelimiter = cmbox_delimiter.SelectedItem.ToString();
 
-            pf = new parseFile(filesPath, cmbox_delimiter.SelectedItem.ToString());
+            pf = new parseFile(filesPath, fileDelimiter);
 
             btn_loadFilesToList.Enabled = false;
             btn_loadFilesToList.Text = "Loading...";
 
-            await Task.Run(() => pf.ldFiles());
+            await pf.ldFiles();
 
             this.fileListLoaded = true;
 

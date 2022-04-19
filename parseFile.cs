@@ -40,10 +40,10 @@ namespace BulkImportDelimitedFlatFiles
             return this.iLV;
         }
 
-        public async Task ldFiles()
+        public Task ldFiles()
         {
             //MessageBox.Show("Made it to the func");
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 try
                 {
