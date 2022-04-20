@@ -70,6 +70,7 @@ namespace BulkImportDelimitedFlatFiles
             this.tsm_file = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_exit = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmii_excelToCsvConverter = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi_clearData = new System.Windows.Forms.ToolStripMenuItem();
@@ -117,6 +118,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_pickUpPath.Name = "txtbox_pickUpPath";
             this.txtbox_pickUpPath.Size = new System.Drawing.Size(497, 23);
             this.txtbox_pickUpPath.TabIndex = 19;
+            this.txtbox_pickUpPath.Text = "C:\\Users\\Owner\\Downloads\\sampledatainsurance\\csv";
             // 
             // lbl_sqlDatabase
             // 
@@ -133,6 +135,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_sqlDatabase.Name = "txtbox_sqlDatabase";
             this.txtbox_sqlDatabase.Size = new System.Drawing.Size(180, 23);
             this.txtbox_sqlDatabase.TabIndex = 17;
+            this.txtbox_sqlDatabase.Text = "TestImport";
             // 
             // lbl_sqlPass
             // 
@@ -150,6 +153,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_sqlPass.Name = "txtbox_sqlPass";
             this.txtbox_sqlPass.Size = new System.Drawing.Size(180, 23);
             this.txtbox_sqlPass.TabIndex = 15;
+            this.txtbox_sqlPass.Text = "Test123!";
             this.txtbox_sqlPass.UseSystemPasswordChar = true;
             // 
             // lbl_sqlUser
@@ -167,6 +171,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_sqlUser.Name = "txtbox_sqlUser";
             this.txtbox_sqlUser.Size = new System.Drawing.Size(180, 23);
             this.txtbox_sqlUser.TabIndex = 13;
+            this.txtbox_sqlUser.Text = "sa";
             // 
             // lbl_sqlServer
             // 
@@ -183,6 +188,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_sqlServer.Name = "txtbox_sqlServer";
             this.txtbox_sqlServer.Size = new System.Drawing.Size(180, 23);
             this.txtbox_sqlServer.TabIndex = 11;
+            this.txtbox_sqlServer.Text = ".";
             // 
             // lbl_testConnStatus
             // 
@@ -222,7 +228,6 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // sc_Main
             // 
-            this.sc_Main.Cursor = System.Windows.Forms.Cursors.Default;
             this.sc_Main.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.sc_Main.Location = new System.Drawing.Point(12, 27);
             this.sc_Main.Name = "sc_Main";
@@ -346,18 +351,6 @@ namespace BulkImportDelimitedFlatFiles
             this.sc_innerContainer.SplitterDistance = 677;
             this.sc_innerContainer.TabIndex = 34;
             // 
-            // columnheader1
-            // 
-            this.columnheader1.Text = "FileName";
-            // 
-            // columnheader2
-            // 
-            this.columnheader2.Text = "Size";
-            // 
-            // columnheader2
-            // 
-            this.columnheader3.Text = "Byte Size";
-            // 
             // lv_fileList
             // 
             this.lv_fileList.AllowDrop = true;
@@ -365,8 +358,7 @@ namespace BulkImportDelimitedFlatFiles
             this.lv_fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnheader1,
             this.columnheader2,
-            this.columnheader3
-            });
+            this.columnheader3});
             this.lv_fileList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lv_fileList.FullRowSelect = true;
             this.lv_fileList.HideSelection = false;
@@ -380,11 +372,23 @@ namespace BulkImportDelimitedFlatFiles
             this.lv_fileList.UseCompatibleStateImageBehavior = false;
             this.lv_fileList.View = System.Windows.Forms.View.Details;
             this.lv_fileList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lv_fileList_ColumnClick);
+            this.lv_fileList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lv_fileList_ItemChecked);
             this.lv_fileList.SelectedIndexChanged += new System.EventHandler(this.cbl_fileList_SelectedIndexChanged);
             this.lv_fileList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseDown);
             this.lv_fileList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseMove);
             this.lv_fileList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lv_fileList_MouseUp);
-          
+            // 
+            // columnheader1
+            // 
+            this.columnheader1.Text = "FileName";
+            // 
+            // columnheader2
+            // 
+            this.columnheader2.Text = "Size";
+            // 
+            // columnheader3
+            // 
+            this.columnheader3.Text = "Byte Size";
             // 
             // dgv_FieldList
             // 
@@ -519,12 +523,20 @@ namespace BulkImportDelimitedFlatFiles
             // tsmi_tools
             // 
             this.tsmi_tools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem,
             this.tsmii_excelToCsvConverter,
             this.toolStripSeparator1,
             this.tsmi_clearData});
             this.tsmi_tools.Name = "tsmi_tools";
             this.tsmi_tools.Size = new System.Drawing.Size(46, 20);
             this.tsmi_tools.Text = "Tools";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(277, 22);
+            this.optionsToolStripMenuItem.Text = "Settings";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // tsmii_excelToCsvConverter
             // 
@@ -566,6 +578,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_FinalTableName.Name = "txtbox_FinalTableName";
             this.txtbox_FinalTableName.Size = new System.Drawing.Size(225, 23);
             this.txtbox_FinalTableName.TabIndex = 34;
+            this.txtbox_FinalTableName.TextChanged += new System.EventHandler(this.txtbox_FinalTableName_TextChanged);
             // 
             // btn_loadToSQL
             // 
@@ -597,6 +610,7 @@ namespace BulkImportDelimitedFlatFiles
             this.txtbox_tablePrefix.Name = "txtbox_tablePrefix";
             this.txtbox_tablePrefix.Size = new System.Drawing.Size(225, 23);
             this.txtbox_tablePrefix.TabIndex = 34;
+            this.txtbox_tablePrefix.TextChanged += new System.EventHandler(this.txtbox_tablePrefix_TextChanged);
             // 
             // lbl_warningIncremental
             // 
@@ -693,6 +707,7 @@ namespace BulkImportDelimitedFlatFiles
         private System.Windows.Forms.Label lbl_warningIncremental;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     }
 }
 

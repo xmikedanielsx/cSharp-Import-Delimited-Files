@@ -7,27 +7,29 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
+using System.Drawing;
 
 namespace BulkImportDelimitedFlatFiles
 {
-    class parseFile : frm_Main
+    class parseFile
     {
         private DirectoryInfo dirInfo;
-        private subClass parent;
         public FileInfo[] tfiles = new FileInfo[] { };
         private string fileDelmiter;
-        public ListView iLV = new ListView();
+        private readonly Dictionary<string, DataTable> ptFilesToLoad;
+        private readonly string[] extensions;
+        public ListView iLV;
         // Class Constructor
-        public parseFile(string dirLocation, string fileDelmiter)
+        public parseFile(string dirLocation, string fileDelmiter, ListView ptFiles, Dictionary<string, DataTable> ptFilesToLoad, string[] extensions)
         {
-            this.parent = parent;
             this.fileDelmiter = fileDelmiter;
-            try
+            this.ptFilesToLoad = ptFilesToLoad;
+            this.extensions = extensions;
+            this.iLV = ptFiles;
+            this.dirInfo = new DirectoryInfo(dirLocation);
+            if (!dirInfo.Exists)
             {
-                this.dirInfo = new DirectoryInfo(dirLocation);
-            } catch (Exception e)
-            {
-                throw (new Exception(@"Sorry but your directory does not exist or you do not have access"));
+                throw new Exception(@"Sorry but your directory does not exist or you do not have access");
             }
         }
 
@@ -39,7 +41,8 @@ namespace BulkImportDelimitedFlatFiles
         {
             return this.iLV;
         }
-
+        ListViewItem nlvi;
+        DataTable dtfl;
         public Task ldFiles()
         {
             //MessageBox.Show("Made it to the func");
@@ -47,8 +50,6 @@ namespace BulkImportDelimitedFlatFiles
             {
                 try
                 {
-
-                    string[] extensions = new[] { ".txt", ".csv" };
 
                     // create local thread object to store the files
                     this.tfiles = dirInfo.EnumerateFiles().Where(f => extensions.Contains(f.Extension.ToLower())).ToArray();
@@ -59,41 +60,46 @@ namespace BulkImportDelimitedFlatFiles
                     Dictionary<string, DataTable> ftLoad = new Dictionary<string, DataTable>();
 
                     //List<string> failedFiles = new List<string>();
+                    
                     foreach (FileInfo fl in tfiles)
                     {
-                        // use custom class to get specific info from file passed
-                        getFileDetails fileDetails = new getFileDetails(fl.FullName.ToString());
-
                         // setup some local variables
-                        string fileName = fileDetails.FullName();
-                        string humanSize = fileDetails.humanSize();
-                        long fileSize = fileDetails.Size();
-                        string[] fileArr = fileDetails.createFileArray();
-                        ListViewItem nlvi = new ListViewItem(fileArr);
-                        iLV.Items.Add(nlvi);
+                        string fileName = fl.FullName;
+                        string humanSize = fl.humanSize();
+                        long fileSize = fl.Length;
+                        string[] fileArr = fl.createFileInfoArray();
+                        string csvDataException = "";
+                        nlvi = new ListViewItem(fileArr);
 
-                        parent.addFileToList(fileName);
-                        // use parent class to add item to FileList
-                        base.addFileToList(fileName);
-                        //Invoke(new Action<ListViewItem>(addFileToList), nlvi);
 
                         // Get the DataTable from the file
-                        DataTable dtfl =  this.GetDataTableFromCSVFile(fileName);
+                        try
+                        {
+                            dtfl = this.GetDataTableFromCSVFile(fileName);
+                        } catch (Exception getCsvDataException)
+                        {
+                            dtfl = null;
+                            csvDataException = getCsvDataException.Message.ToString();
+                        }
+                        
 
                         // if the datatable is not null then add the data file to the list of files loaded
                         if (dtfl != null)
                         {
-                            // add to filesToLoad
-                            base.addAFileToLoad(fileName, dtfl);
-                            // Invoke(new Action<string, DataTable>(addAFileToLoad), new object[] { fileName, dtfl });
+                            nlvi.Checked = true;
+                            iLV.Invoke((MethodInvoker)delegate {iLV.Items.Add(nlvi);});
+                            ptFilesToLoad.Add(fileName, dtfl);
+
                         }
                         // if the datatable is null then that means the CSV Extraction failed and we'll load it to failed files.
                         else
                         {
-                            // add to FailedFilesToLoad
-                            base.addFailedFileToList(fileName);
-                            // Invoke(new Action<ListViewItem>(addFailedFileToList), nlvi);
+                            nlvi.ForeColor = Color.Red;
+                            nlvi.Tag = csvDataException;
+                            nlvi.Checked = false;
+                            iLV.Invoke((MethodInvoker)delegate { iLV.Items.Add(nlvi); });
                         }
+                        iLV.Invoke((MethodInvoker) delegate { iLV.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent); });
                     }
                 }
                 catch (Exception ex)
@@ -107,63 +113,82 @@ namespace BulkImportDelimitedFlatFiles
         private  DataTable GetDataTableFromCSVFile(string csv_file_path)
         {
             DataTable csvData = new DataTable();
-            try
+           
+            using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
             {
-                using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
+                string[] dv;
+                List<string> dl = new List<string>();
+                switch (fileDelmiter)
                 {
-                    string[] dv;
-                    List<string> dl = new List<string>();
-                    switch (fileDelmiter)
+                    case "Tab":
+                        dl.Add("\t");
+                        break;
+                    case "Comma":
+                        dl.Add(",");
+                        break;
+                    case "Semi-Colon":
+                        dl.Add(";");
+                        break;
+                    case "Pipe":
+                        dl.Add("|");
+                        break;
+                    default:
+                        dl.Add("\t");
+                        break;
+                }
+                dv = dl.ToArray();
+                //MessageBox.Show(dv);
+                csvReader.SetDelimiters(dv);
+                csvReader.HasFieldsEnclosedInQuotes = true;
+                string[] colFields = csvReader.ReadFields();
+                foreach (string column in colFields)
+                {
+                    DataColumn datecolumn = new DataColumn(column);
+                    datecolumn.AllowDBNull = true;
+                    csvData.Columns.Add(datecolumn);
+                }
+                while (!csvReader.EndOfData)
+                {
+                    string[] fieldData = csvReader.ReadFields();
+                    //Making empty value as null
+                    for (int i = 0; i < fieldData.Length; i++)
                     {
-                        case "Tab":
-                            dl.Add("\t");
-                            break;
-                        case "Comma":
-                            dl.Add(",");
-                            break;
-                        case "Semi-Colon":
-                            dl.Add(";");
-                            break;
-                        case "Pipe":
-                            dl.Add("|");
-                            break;
-                        default:
-                            dl.Add("\t");
-                            break;
-                    }
-                    dv = dl.ToArray();
-                    //MessageBox.Show(dv);
-                    csvReader.SetDelimiters(dv);
-                    csvReader.HasFieldsEnclosedInQuotes = true;
-                    string[] colFields = csvReader.ReadFields();
-                    foreach (string column in colFields)
-                    {
-                        DataColumn datecolumn = new DataColumn(column);
-                        datecolumn.AllowDBNull = true;
-                        csvData.Columns.Add(datecolumn);
-                    }
-                    while (!csvReader.EndOfData)
-                    {
-                        string[] fieldData = csvReader.ReadFields();
-                        //Making empty value as null
-                        for (int i = 0; i < fieldData.Length; i++)
+                        if (fieldData[i] == "")
                         {
-                            if (fieldData[i] == "")
-                            {
-                                fieldData[i] = null;
-                            }
+                            fieldData[i] = null;
                         }
-                        csvData.Rows.Add(fieldData);
                     }
+                    csvData.Rows.Add(fieldData);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString());
-                return null;
-            }
+            
+            
             return csvData;
         }
 
+    }
+
+    public static class FileInfoExtensions
+    {
+        public static string humanSize(this FileInfo fi)
+        {
+            double len = fi.Length;
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (len == 0)
+                return "0" + suf[0];
+
+            double bytes = (double)Math.Abs(Convert.ToDecimal(len));
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (string)(Math.Sign(len) * num).ToString() + " " + suf[place];
+        }
+        public static string[] createFileInfoArray(this FileInfo fi)
+        {
+            string[] fileArr = new string[4];
+            fileArr[0] = fi.FullName;
+            fileArr[1] = fi.humanSize();
+            fileArr[2] = fi.Length.ToString();
+            return fileArr;
+        }
     }
 }
