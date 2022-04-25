@@ -113,6 +113,7 @@ namespace BulkImportDelimitedFlatFiles
         private  DataTable GetDataTableFromCSVFile(string csv_file_path)
         {
             DataTable csvData = new DataTable();
+            FileInfo fi = new FileInfo(csv_file_path);
            
             using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
             {
@@ -160,9 +161,12 @@ namespace BulkImportDelimitedFlatFiles
                     }
                     csvData.Rows.Add(fieldData);
                 }
+                DataColumn dcOFileName = new DataColumn("OrigFileName", typeof(String));
+                dcOFileName.DefaultValue = fi.Name;
+                csvData.Columns.Add(dcOFileName);
             }
-            
-            
+
+
             return csvData;
         }
 

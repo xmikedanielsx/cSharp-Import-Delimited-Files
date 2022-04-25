@@ -309,6 +309,12 @@ namespace BulkImportDelimitedFlatFiles
                 DataTable dtToLoad;
                 
                 dtToLoad = this.pFilesToLoad[lii.Text];
+                string tfName = fi.Name;
+                string tfNameClean = fi.Name.Replace(".csv", "").ToString();
+
+                //DataColumn dcOFileName = new DataColumn("OriginalFileName", typeof(String));
+                //dcOFileName.DefaultValue = tfName;
+                //dtToLoad.Columns.Add(dcOFileName);
 
                 string createTable = "CREATE TABLE [" + tNameToInsert + "] (";
                 Dictionary<string, Dictionary<string, string>> fd = ftlm[fi.FullName.ToString()];

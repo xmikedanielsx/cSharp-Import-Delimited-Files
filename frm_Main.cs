@@ -454,7 +454,7 @@ namespace BulkImportDelimitedFlatFiles
                 // Mapping Doesn't exist prefil will generic mapping
                 foreach (DataColumn col in dt.Columns)
                 {
-                    dgv_FieldList.Rows.Add(
+                    int ofNameRow = dgv_FieldList.Rows.Add(
                         col.Ordinal.ToString()
                         , col.ColumnName
                         , "Text"
