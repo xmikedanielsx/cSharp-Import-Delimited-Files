@@ -25,3 +25,5 @@ Once done they can use that foler to import.
 ### Constant import
 The utility allows you to do increemental table imports up to (999) tables (can be increased with simple modification) along with a completely unioned table per load if the schemas 
 are similar enough this is super helpful for files that are close to the same every time you get them. (Maybe different populations of some category of data).
+
+### New Branch for Table Names = File Names
