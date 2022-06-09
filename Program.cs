@@ -17,6 +17,7 @@ namespace BulkImportDelimitedFlatFiles
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new frm_aboutBox());
             Application.Run(new frm_Main());
         }
     }

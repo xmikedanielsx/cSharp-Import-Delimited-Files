@@ -1,4 +1,5 @@
 {
 	"tableName": "Original_",
-	"tablePrefix":  "Original"
+	"tablePrefix": "Original",
+	"splashBg": ""
 }
