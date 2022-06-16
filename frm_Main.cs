@@ -402,6 +402,7 @@ namespace BulkImportDelimitedFlatFiles
         int dblbl_left;
         int dbtxtbox_left;
         int btntestconn_left;
+        int btntestconn_top;
         private void chbox_windowsAuth_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chbox_windowsAuth.Checked == true)
@@ -415,9 +416,11 @@ namespace BulkImportDelimitedFlatFiles
                 this.dblbl_left = lbl_sqlDatabase.Left;
                 this.dbtxtbox_left = txtbox_sqlDatabase.Left;
                 this.btntestconn_left = btn_testConnection.Left;
+                this.btntestconn_top = btn_testConnection.Top;
                 lbl_sqlDatabase.Left = txtbox_sqlServer.Right + 10;
                 txtbox_sqlDatabase.Left = lbl_sqlDatabase.Right + 10;
                 btn_testConnection.Left = txtbox_sqlDatabase.Right + 10;
+                btn_testConnection.Top = lbl_sqlDatabase.Top - 5;
             }
             else
             {
@@ -430,6 +433,7 @@ namespace BulkImportDelimitedFlatFiles
                 lbl_sqlDatabase.Left = this.dblbl_left;
                 txtbox_sqlDatabase.Left = this.dbtxtbox_left;
                 btn_testConnection.Left = this.btntestconn_left;
+                btn_testConnection.Top = this.btntestconn_top;
             }
         }
         private void updateFileMapping(int idx)

@@ -95,11 +95,12 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_testConnection
             // 
-            this.btn_testConnection.Location = new System.Drawing.Point(1068, 18);
+            this.btn_testConnection.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btn_testConnection.Location = new System.Drawing.Point(893, 56);
             this.btn_testConnection.Name = "btn_testConnection";
-            this.btn_testConnection.Size = new System.Drawing.Size(43, 23);
+            this.btn_testConnection.Size = new System.Drawing.Size(133, 34);
             this.btn_testConnection.TabIndex = 21;
-            this.btn_testConnection.Text = "Test";
+            this.btn_testConnection.Text = "Test Connection";
             this.btn_testConnection.UseVisualStyleBackColor = true;
             this.btn_testConnection.Click += new System.EventHandler(this.btn_testConnection_Click);
             // 
@@ -114,6 +115,8 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_pickUpPath
             // 
+            this.txtbox_pickUpPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbox_pickUpPath.Location = new System.Drawing.Point(139, 41);
             this.txtbox_pickUpPath.Name = "txtbox_pickUpPath";
             this.txtbox_pickUpPath.Size = new System.Drawing.Size(497, 23);
@@ -192,14 +195,15 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_testConnStatus
             // 
-            this.lbl_testConnStatus.Location = new System.Drawing.Point(260, 45);
+            this.lbl_testConnStatus.Location = new System.Drawing.Point(75, 66);
             this.lbl_testConnStatus.Name = "lbl_testConnStatus";
-            this.lbl_testConnStatus.Size = new System.Drawing.Size(800, 15);
+            this.lbl_testConnStatus.Size = new System.Drawing.Size(745, 15);
             this.lbl_testConnStatus.TabIndex = 22;
             this.lbl_testConnStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btn_openFileDiag
             // 
+            this.btn_openFileDiag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_openFileDiag.Location = new System.Drawing.Point(642, 40);
             this.btn_openFileDiag.Name = "btn_openFileDiag";
             this.btn_openFileDiag.Size = new System.Drawing.Size(37, 24);
@@ -210,6 +214,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadFilesToList
             // 
+            this.btn_loadFilesToList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_loadFilesToList.Location = new System.Drawing.Point(1066, 41);
             this.btn_loadFilesToList.Name = "btn_loadFilesToList";
             this.btn_loadFilesToList.Size = new System.Drawing.Size(84, 23);
@@ -284,10 +289,11 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_CollapseTopPanel
             // 
+            this.lbl_CollapseTopPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_CollapseTopPanel.AutoSize = true;
             this.lbl_CollapseTopPanel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lbl_CollapseTopPanel.ForeColor = System.Drawing.Color.Blue;
-            this.lbl_CollapseTopPanel.Location = new System.Drawing.Point(1065, 55);
+            this.lbl_CollapseTopPanel.Location = new System.Drawing.Point(1107, 75);
             this.lbl_CollapseTopPanel.Name = "lbl_CollapseTopPanel";
             this.lbl_CollapseTopPanel.Size = new System.Drawing.Size(52, 15);
             this.lbl_CollapseTopPanel.TabIndex = 26;
@@ -297,6 +303,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_defaultDataLength
             // 
+            this.txtbox_defaultDataLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbox_defaultDataLength.Location = new System.Drawing.Point(958, 41);
             this.txtbox_defaultDataLength.Name = "txtbox_defaultDataLength";
             this.txtbox_defaultDataLength.Size = new System.Drawing.Size(83, 23);
@@ -304,6 +311,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_defaultDataLength
             // 
+            this.lbl_defaultDataLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_defaultDataLength.AutoSize = true;
             this.lbl_defaultDataLength.Location = new System.Drawing.Point(867, 45);
             this.lbl_defaultDataLength.Name = "lbl_defaultDataLength";
@@ -313,6 +321,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // cmbox_delimiter
             // 
+            this.cmbox_delimiter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbox_delimiter.FormattingEnabled = true;
             this.cmbox_delimiter.Items.AddRange(new object[] {
             "Tab",
@@ -326,6 +335,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_delimiterLbl
             // 
+            this.lbl_delimiterLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_delimiterLbl.AutoSize = true;
             this.lbl_delimiterLbl.Location = new System.Drawing.Point(697, 46);
             this.lbl_delimiterLbl.Name = "lbl_delimiterLbl";
@@ -451,10 +461,11 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_ExpandTopPanel
             // 
+            this.lbl_ExpandTopPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_ExpandTopPanel.AutoSize = true;
             this.lbl_ExpandTopPanel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lbl_ExpandTopPanel.ForeColor = System.Drawing.Color.Blue;
-            this.lbl_ExpandTopPanel.Location = new System.Drawing.Point(1068, 0);
+            this.lbl_ExpandTopPanel.Location = new System.Drawing.Point(1112, 3);
             this.lbl_ExpandTopPanel.Name = "lbl_ExpandTopPanel";
             this.lbl_ExpandTopPanel.Size = new System.Drawing.Size(47, 15);
             this.lbl_ExpandTopPanel.TabIndex = 27;
@@ -589,7 +600,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadToSQL
             // 
-            this.btn_loadToSQL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btn_loadToSQL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_loadToSQL.Location = new System.Drawing.Point(1090, 720);
             this.btn_loadToSQL.Name = "btn_loadToSQL";
             this.btn_loadToSQL.Size = new System.Drawing.Size(83, 23);
