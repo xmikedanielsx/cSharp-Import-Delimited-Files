@@ -501,7 +501,8 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_LoadToSQLStatus
             // 
-            this.lbl_LoadToSQLStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl_LoadToSQLStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(16, 752);
             this.lbl_LoadToSQLStatus.Name = "lbl_LoadToSQLStatus";
             this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(1158, 22);
