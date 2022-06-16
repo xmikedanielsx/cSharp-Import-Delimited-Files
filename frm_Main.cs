@@ -42,10 +42,14 @@ namespace BulkImportDelimitedFlatFiles
         parseFile pf;
         frm_ErrorList errorDialog;
         string[] extensions = new[] { ".txt", ".csv" };
+        int frmWidth;
+        int frmHeight;
 
         public frm_Main()
         {
             InitializeComponent();
+            this.frmWidth = this.Width;
+            this.frmHeight = this.Height;
             lbl_ExpandTopPanel.Visible = false;
             cmbox_delimiter.SelectedItem = "Tab";
             txtbox_defaultDataLength.Text = "max";
@@ -402,6 +406,7 @@ namespace BulkImportDelimitedFlatFiles
         int dblbl_left;
         int dbtxtbox_left;
         int btntestconn_left;
+        int btntestconn_top;
         private void chbox_windowsAuth_CheckedChanged(object sender, EventArgs e)
         {
             if (this.chbox_windowsAuth.Checked == true)
@@ -415,9 +420,10 @@ namespace BulkImportDelimitedFlatFiles
                 this.dblbl_left = lbl_sqlDatabase.Left;
                 this.dbtxtbox_left = txtbox_sqlDatabase.Left;
                 this.btntestconn_left = btn_testConnection.Left;
-                lbl_sqlDatabase.Left = txtbox_sqlServer.Right + 10;
-                txtbox_sqlDatabase.Left = lbl_sqlDatabase.Right + 10;
-                btn_testConnection.Left = txtbox_sqlDatabase.Right + 10;
+                this.btntestconn_top = btn_testConnection.Top;
+                lbl_sqlDatabase.Left = txtbox_sqlServer.Right + 15;
+                txtbox_sqlDatabase.Left = lbl_sqlDatabase.Left;
+                btn_testConnection.Left = txtbox_sqlDatabase.Right + 15;
             }
             else
             {
@@ -430,6 +436,7 @@ namespace BulkImportDelimitedFlatFiles
                 lbl_sqlDatabase.Left = this.dblbl_left;
                 txtbox_sqlDatabase.Left = this.dbtxtbox_left;
                 btn_testConnection.Left = this.btntestconn_left;
+                btn_testConnection.Top = this.btntestconn_top;
             }
         }
         private void updateFileMapping(int idx)
@@ -826,8 +833,38 @@ namespace BulkImportDelimitedFlatFiles
         {
           
         }
+
+        private void frm_Main_ResizeEnd(object sender, EventArgs e)
+        {
+            resizeServerArea();
+        }
+
+        private void resizeServerArea ()
+        {
+            int growthWidth = this.Width - this.frmWidth;
+            //int growthHeight = this.Height = this.frmHeight;
+            int shiftWidth = growthWidth / 5;
+            int offSetSize = 15;
+            txtbox_sqlServer.Width += shiftWidth;
+
+            txtbox_sqlUser.Width += shiftWidth;
+            txtbox_sqlUser.Left = txtbox_sqlServer.Right + offSetSize;
+            lbl_sqlUser.Left = txtbox_sqlUser.Left;
+            txtbox_sqlPass.Width += shiftWidth;
+            txtbox_sqlPass.Left = txtbox_sqlUser.Right + offSetSize;
+            lbl_sqlPass.Left = txtbox_sqlPass.Left;
+            txtbox_sqlDatabase.Width += shiftWidth;
+            txtbox_sqlDatabase.Left = txtbox_sqlPass.Right + offSetSize;
+            lbl_sqlDatabase.Left = txtbox_sqlDatabase.Left;
+            this.frmWidth = this.Width;
+        }
+
+        private void frm_Main_Resize(object sender, EventArgs e)
+        {
+            resizeServerArea();
+        }
     }
-        
+
 
     public class ColumnSorter : IComparer
     {

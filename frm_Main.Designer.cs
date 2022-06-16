@@ -95,11 +95,13 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_testConnection
             // 
-            this.btn_testConnection.Location = new System.Drawing.Point(1068, 18);
+            this.btn_testConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_testConnection.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btn_testConnection.Location = new System.Drawing.Point(1017, 16);
             this.btn_testConnection.Name = "btn_testConnection";
-            this.btn_testConnection.Size = new System.Drawing.Size(43, 23);
+            this.btn_testConnection.Size = new System.Drawing.Size(133, 34);
             this.btn_testConnection.TabIndex = 21;
-            this.btn_testConnection.Text = "Test";
+            this.btn_testConnection.Text = "Test Connection";
             this.btn_testConnection.UseVisualStyleBackColor = true;
             this.btn_testConnection.Click += new System.EventHandler(this.btn_testConnection_Click);
             // 
@@ -114,6 +116,8 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_pickUpPath
             // 
+            this.txtbox_pickUpPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbox_pickUpPath.Location = new System.Drawing.Point(139, 41);
             this.txtbox_pickUpPath.Name = "txtbox_pickUpPath";
             this.txtbox_pickUpPath.Size = new System.Drawing.Size(497, 23);
@@ -122,84 +126,85 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_sqlDatabase
             // 
-            this.lbl_sqlDatabase.AutoSize = true;
-            this.lbl_sqlDatabase.Location = new System.Drawing.Point(755, 20);
+            this.lbl_sqlDatabase.Location = new System.Drawing.Point(730, 9);
             this.lbl_sqlDatabase.Name = "lbl_sqlDatabase";
-            this.lbl_sqlDatabase.Size = new System.Drawing.Size(82, 15);
+            this.lbl_sqlDatabase.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlDatabase.TabIndex = 18;
             this.lbl_sqlDatabase.Text = "SQL Database:";
+            this.lbl_sqlDatabase.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlDatabase
             // 
-            this.txtbox_sqlDatabase.Location = new System.Drawing.Point(846, 18);
+            this.txtbox_sqlDatabase.Location = new System.Drawing.Point(730, 27);
             this.txtbox_sqlDatabase.Name = "txtbox_sqlDatabase";
-            this.txtbox_sqlDatabase.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlDatabase.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlDatabase.TabIndex = 17;
             this.txtbox_sqlDatabase.Text = "TestImport";
             // 
             // lbl_sqlPass
             // 
-            this.lbl_sqlPass.AutoSize = true;
-            this.lbl_sqlPass.Location = new System.Drawing.Point(508, 20);
+            this.lbl_sqlPass.Location = new System.Drawing.Point(490, 9);
             this.lbl_sqlPass.Name = "lbl_sqlPass";
-            this.lbl_sqlPass.Size = new System.Drawing.Size(57, 15);
+            this.lbl_sqlPass.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlPass.TabIndex = 16;
             this.lbl_sqlPass.Text = "SQL Pass:";
+            this.lbl_sqlPass.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbl_sqlPass.Click += new System.EventHandler(this.lbl_sqlPass_Click);
             // 
             // txtbox_sqlPass
             // 
-            this.txtbox_sqlPass.Location = new System.Drawing.Point(572, 18);
+            this.txtbox_sqlPass.Location = new System.Drawing.Point(490, 27);
             this.txtbox_sqlPass.Name = "txtbox_sqlPass";
-            this.txtbox_sqlPass.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlPass.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlPass.TabIndex = 15;
             this.txtbox_sqlPass.Text = "Test123!";
             this.txtbox_sqlPass.UseSystemPasswordChar = true;
             // 
             // lbl_sqlUser
             // 
-            this.lbl_sqlUser.AutoSize = true;
-            this.lbl_sqlUser.Location = new System.Drawing.Point(260, 20);
+            this.lbl_sqlUser.Location = new System.Drawing.Point(250, 9);
             this.lbl_sqlUser.Name = "lbl_sqlUser";
-            this.lbl_sqlUser.Size = new System.Drawing.Size(57, 15);
+            this.lbl_sqlUser.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlUser.TabIndex = 14;
             this.lbl_sqlUser.Text = "SQL User:";
+            this.lbl_sqlUser.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlUser
             // 
-            this.txtbox_sqlUser.Location = new System.Drawing.Point(323, 18);
+            this.txtbox_sqlUser.Location = new System.Drawing.Point(250, 27);
             this.txtbox_sqlUser.Name = "txtbox_sqlUser";
-            this.txtbox_sqlUser.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlUser.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlUser.TabIndex = 13;
             this.txtbox_sqlUser.Text = "sa";
             // 
             // lbl_sqlServer
             // 
-            this.lbl_sqlServer.AutoSize = true;
-            this.lbl_sqlServer.Location = new System.Drawing.Point(4, 24);
+            this.lbl_sqlServer.Location = new System.Drawing.Point(10, 9);
             this.lbl_sqlServer.Name = "lbl_sqlServer";
-            this.lbl_sqlServer.Size = new System.Drawing.Size(66, 15);
+            this.lbl_sqlServer.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlServer.TabIndex = 12;
             this.lbl_sqlServer.Text = "SQL Server:";
+            this.lbl_sqlServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlServer
             // 
-            this.txtbox_sqlServer.Location = new System.Drawing.Point(75, 18);
+            this.txtbox_sqlServer.Location = new System.Drawing.Point(10, 27);
             this.txtbox_sqlServer.Name = "txtbox_sqlServer";
-            this.txtbox_sqlServer.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlServer.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlServer.TabIndex = 11;
             this.txtbox_sqlServer.Text = ".";
             // 
             // lbl_testConnStatus
             // 
-            this.lbl_testConnStatus.Location = new System.Drawing.Point(260, 45);
+            this.lbl_testConnStatus.Location = new System.Drawing.Point(10, 75);
             this.lbl_testConnStatus.Name = "lbl_testConnStatus";
-            this.lbl_testConnStatus.Size = new System.Drawing.Size(800, 15);
+            this.lbl_testConnStatus.Size = new System.Drawing.Size(1007, 15);
             this.lbl_testConnStatus.TabIndex = 22;
             this.lbl_testConnStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btn_openFileDiag
             // 
+            this.btn_openFileDiag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_openFileDiag.Location = new System.Drawing.Point(642, 40);
             this.btn_openFileDiag.Name = "btn_openFileDiag";
             this.btn_openFileDiag.Size = new System.Drawing.Size(37, 24);
@@ -210,6 +215,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadFilesToList
             // 
+            this.btn_loadFilesToList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_loadFilesToList.Location = new System.Drawing.Point(1066, 41);
             this.btn_loadFilesToList.Name = "btn_loadFilesToList";
             this.btn_loadFilesToList.Size = new System.Drawing.Size(84, 23);
@@ -228,6 +234,9 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // sc_Main
             // 
+            this.sc_Main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sc_Main.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.sc_Main.Location = new System.Drawing.Point(12, 27);
             this.sc_Main.Name = "sc_Main";
@@ -270,7 +279,7 @@ namespace BulkImportDelimitedFlatFiles
             // chbox_windowsAuth
             // 
             this.chbox_windowsAuth.AutoSize = true;
-            this.chbox_windowsAuth.Location = new System.Drawing.Point(75, 44);
+            this.chbox_windowsAuth.Location = new System.Drawing.Point(11, 53);
             this.chbox_windowsAuth.Name = "chbox_windowsAuth";
             this.chbox_windowsAuth.Size = new System.Drawing.Size(157, 19);
             this.chbox_windowsAuth.TabIndex = 33;
@@ -281,10 +290,11 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_CollapseTopPanel
             // 
+            this.lbl_CollapseTopPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_CollapseTopPanel.AutoSize = true;
             this.lbl_CollapseTopPanel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lbl_CollapseTopPanel.ForeColor = System.Drawing.Color.Blue;
-            this.lbl_CollapseTopPanel.Location = new System.Drawing.Point(1065, 55);
+            this.lbl_CollapseTopPanel.Location = new System.Drawing.Point(1107, 75);
             this.lbl_CollapseTopPanel.Name = "lbl_CollapseTopPanel";
             this.lbl_CollapseTopPanel.Size = new System.Drawing.Size(52, 15);
             this.lbl_CollapseTopPanel.TabIndex = 26;
@@ -294,6 +304,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_defaultDataLength
             // 
+            this.txtbox_defaultDataLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbox_defaultDataLength.Location = new System.Drawing.Point(958, 41);
             this.txtbox_defaultDataLength.Name = "txtbox_defaultDataLength";
             this.txtbox_defaultDataLength.Size = new System.Drawing.Size(83, 23);
@@ -301,6 +312,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_defaultDataLength
             // 
+            this.lbl_defaultDataLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_defaultDataLength.AutoSize = true;
             this.lbl_defaultDataLength.Location = new System.Drawing.Point(867, 45);
             this.lbl_defaultDataLength.Name = "lbl_defaultDataLength";
@@ -310,6 +322,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // cmbox_delimiter
             // 
+            this.cmbox_delimiter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbox_delimiter.FormattingEnabled = true;
             this.cmbox_delimiter.Items.AddRange(new object[] {
             "Tab",
@@ -323,6 +336,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_delimiterLbl
             // 
+            this.lbl_delimiterLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_delimiterLbl.AutoSize = true;
             this.lbl_delimiterLbl.Location = new System.Drawing.Point(697, 46);
             this.lbl_delimiterLbl.Name = "lbl_delimiterLbl";
@@ -448,10 +462,11 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_ExpandTopPanel
             // 
+            this.lbl_ExpandTopPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_ExpandTopPanel.AutoSize = true;
             this.lbl_ExpandTopPanel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lbl_ExpandTopPanel.ForeColor = System.Drawing.Color.Blue;
-            this.lbl_ExpandTopPanel.Location = new System.Drawing.Point(1068, 0);
+            this.lbl_ExpandTopPanel.Location = new System.Drawing.Point(1112, 3);
             this.lbl_ExpandTopPanel.Name = "lbl_ExpandTopPanel";
             this.lbl_ExpandTopPanel.Size = new System.Drawing.Size(47, 15);
             this.lbl_ExpandTopPanel.TabIndex = 27;
@@ -461,6 +476,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_CreateAllTablesTable
             // 
+            this.chbox_CreateAllTablesTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_CreateAllTablesTable.AutoSize = true;
             this.chbox_CreateAllTablesTable.Checked = true;
             this.chbox_CreateAllTablesTable.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -474,6 +490,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_DropTables
             // 
+            this.chbox_DropTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_DropTables.AutoSize = true;
             this.chbox_DropTables.Location = new System.Drawing.Point(19, 722);
             this.chbox_DropTables.Name = "chbox_DropTables";
@@ -485,6 +502,8 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_LoadToSQLStatus
             // 
+            this.lbl_LoadToSQLStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(16, 752);
             this.lbl_LoadToSQLStatus.Name = "lbl_LoadToSQLStatus";
             this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(1158, 22);
@@ -574,6 +593,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_FinalTableName
             // 
+            this.txtbox_FinalTableName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtbox_FinalTableName.Location = new System.Drawing.Point(360, 720);
             this.txtbox_FinalTableName.Name = "txtbox_FinalTableName";
             this.txtbox_FinalTableName.Size = new System.Drawing.Size(225, 23);
@@ -582,6 +602,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadToSQL
             // 
+            this.btn_loadToSQL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_loadToSQL.Location = new System.Drawing.Point(1090, 720);
             this.btn_loadToSQL.Name = "btn_loadToSQL";
             this.btn_loadToSQL.Size = new System.Drawing.Size(83, 23);
@@ -592,6 +613,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_tablePrefix
             // 
+            this.chbox_tablePrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_tablePrefix.AutoSize = true;
             this.chbox_tablePrefix.Checked = true;
             this.chbox_tablePrefix.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -606,6 +628,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_tablePrefix
             // 
+            this.txtbox_tablePrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtbox_tablePrefix.Location = new System.Drawing.Point(838, 720);
             this.txtbox_tablePrefix.Name = "txtbox_tablePrefix";
             this.txtbox_tablePrefix.Size = new System.Drawing.Size(225, 23);
@@ -614,6 +637,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_warningIncremental
             // 
+            this.lbl_warningIncremental.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_warningIncremental.Location = new System.Drawing.Point(12, 704);
             this.lbl_warningIncremental.Name = "lbl_warningIncremental";
             this.lbl_warningIncremental.Size = new System.Drawing.Size(342, 15);
@@ -636,8 +660,11 @@ namespace BulkImportDelimitedFlatFiles
             this.Controls.Add(this.ms_Main);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.ms_Main;
+            this.MinimumSize = new System.Drawing.Size(1200, 500);
             this.Name = "frm_Main";
             this.Text = "Import Flat Files in Bulk";
+            this.ResizeEnd += new System.EventHandler(this.frm_Main_ResizeEnd);
+            this.Resize += new System.EventHandler(this.frm_Main_Resize);
             this.sc_Main.Panel1.ResumeLayout(false);
             this.sc_Main.Panel1.PerformLayout();
             this.sc_Main.Panel2.ResumeLayout(false);
