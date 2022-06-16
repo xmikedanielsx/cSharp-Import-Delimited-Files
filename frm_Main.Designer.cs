@@ -228,6 +228,9 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // sc_Main
             // 
+            this.sc_Main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sc_Main.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.sc_Main.Location = new System.Drawing.Point(12, 27);
             this.sc_Main.Name = "sc_Main";
@@ -461,6 +464,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_CreateAllTablesTable
             // 
+            this.chbox_CreateAllTablesTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_CreateAllTablesTable.AutoSize = true;
             this.chbox_CreateAllTablesTable.Checked = true;
             this.chbox_CreateAllTablesTable.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -474,6 +478,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_DropTables
             // 
+            this.chbox_DropTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_DropTables.AutoSize = true;
             this.chbox_DropTables.Location = new System.Drawing.Point(19, 722);
             this.chbox_DropTables.Name = "chbox_DropTables";
@@ -485,6 +490,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_LoadToSQLStatus
             // 
+            this.lbl_LoadToSQLStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_LoadToSQLStatus.Location = new System.Drawing.Point(16, 752);
             this.lbl_LoadToSQLStatus.Name = "lbl_LoadToSQLStatus";
             this.lbl_LoadToSQLStatus.Size = new System.Drawing.Size(1158, 22);
@@ -574,6 +580,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_FinalTableName
             // 
+            this.txtbox_FinalTableName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtbox_FinalTableName.Location = new System.Drawing.Point(360, 720);
             this.txtbox_FinalTableName.Name = "txtbox_FinalTableName";
             this.txtbox_FinalTableName.Size = new System.Drawing.Size(225, 23);
@@ -582,6 +589,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_loadToSQL
             // 
+            this.btn_loadToSQL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btn_loadToSQL.Location = new System.Drawing.Point(1090, 720);
             this.btn_loadToSQL.Name = "btn_loadToSQL";
             this.btn_loadToSQL.Size = new System.Drawing.Size(83, 23);
@@ -592,6 +600,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // chbox_tablePrefix
             // 
+            this.chbox_tablePrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chbox_tablePrefix.AutoSize = true;
             this.chbox_tablePrefix.Checked = true;
             this.chbox_tablePrefix.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -606,6 +615,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // txtbox_tablePrefix
             // 
+            this.txtbox_tablePrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtbox_tablePrefix.Location = new System.Drawing.Point(838, 720);
             this.txtbox_tablePrefix.Name = "txtbox_tablePrefix";
             this.txtbox_tablePrefix.Size = new System.Drawing.Size(225, 23);
@@ -614,6 +624,7 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_warningIncremental
             // 
+            this.lbl_warningIncremental.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_warningIncremental.Location = new System.Drawing.Point(12, 704);
             this.lbl_warningIncremental.Name = "lbl_warningIncremental";
             this.lbl_warningIncremental.Size = new System.Drawing.Size(342, 15);
@@ -636,6 +647,7 @@ namespace BulkImportDelimitedFlatFiles
             this.Controls.Add(this.ms_Main);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.ms_Main;
+            this.MinimumSize = new System.Drawing.Size(1200, 500);
             this.Name = "frm_Main";
             this.Text = "Import Flat Files in Bulk";
             this.sc_Main.Panel1.ResumeLayout(false);
