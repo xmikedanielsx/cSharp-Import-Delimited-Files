@@ -95,8 +95,9 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // btn_testConnection
             // 
+            this.btn_testConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_testConnection.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.btn_testConnection.Location = new System.Drawing.Point(893, 56);
+            this.btn_testConnection.Location = new System.Drawing.Point(1017, 16);
             this.btn_testConnection.Name = "btn_testConnection";
             this.btn_testConnection.Size = new System.Drawing.Size(133, 34);
             this.btn_testConnection.TabIndex = 21;
@@ -125,79 +126,79 @@ namespace BulkImportDelimitedFlatFiles
             // 
             // lbl_sqlDatabase
             // 
-            this.lbl_sqlDatabase.AutoSize = true;
-            this.lbl_sqlDatabase.Location = new System.Drawing.Point(755, 20);
+            this.lbl_sqlDatabase.Location = new System.Drawing.Point(730, 9);
             this.lbl_sqlDatabase.Name = "lbl_sqlDatabase";
-            this.lbl_sqlDatabase.Size = new System.Drawing.Size(82, 15);
+            this.lbl_sqlDatabase.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlDatabase.TabIndex = 18;
             this.lbl_sqlDatabase.Text = "SQL Database:";
+            this.lbl_sqlDatabase.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlDatabase
             // 
-            this.txtbox_sqlDatabase.Location = new System.Drawing.Point(846, 18);
+            this.txtbox_sqlDatabase.Location = new System.Drawing.Point(730, 27);
             this.txtbox_sqlDatabase.Name = "txtbox_sqlDatabase";
-            this.txtbox_sqlDatabase.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlDatabase.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlDatabase.TabIndex = 17;
             this.txtbox_sqlDatabase.Text = "TestImport";
             // 
             // lbl_sqlPass
             // 
-            this.lbl_sqlPass.AutoSize = true;
-            this.lbl_sqlPass.Location = new System.Drawing.Point(508, 20);
+            this.lbl_sqlPass.Location = new System.Drawing.Point(490, 9);
             this.lbl_sqlPass.Name = "lbl_sqlPass";
-            this.lbl_sqlPass.Size = new System.Drawing.Size(57, 15);
+            this.lbl_sqlPass.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlPass.TabIndex = 16;
             this.lbl_sqlPass.Text = "SQL Pass:";
+            this.lbl_sqlPass.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lbl_sqlPass.Click += new System.EventHandler(this.lbl_sqlPass_Click);
             // 
             // txtbox_sqlPass
             // 
-            this.txtbox_sqlPass.Location = new System.Drawing.Point(572, 18);
+            this.txtbox_sqlPass.Location = new System.Drawing.Point(490, 27);
             this.txtbox_sqlPass.Name = "txtbox_sqlPass";
-            this.txtbox_sqlPass.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlPass.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlPass.TabIndex = 15;
             this.txtbox_sqlPass.Text = "Test123!";
             this.txtbox_sqlPass.UseSystemPasswordChar = true;
             // 
             // lbl_sqlUser
             // 
-            this.lbl_sqlUser.AutoSize = true;
-            this.lbl_sqlUser.Location = new System.Drawing.Point(260, 20);
+            this.lbl_sqlUser.Location = new System.Drawing.Point(250, 9);
             this.lbl_sqlUser.Name = "lbl_sqlUser";
-            this.lbl_sqlUser.Size = new System.Drawing.Size(57, 15);
+            this.lbl_sqlUser.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlUser.TabIndex = 14;
             this.lbl_sqlUser.Text = "SQL User:";
+            this.lbl_sqlUser.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlUser
             // 
-            this.txtbox_sqlUser.Location = new System.Drawing.Point(323, 18);
+            this.txtbox_sqlUser.Location = new System.Drawing.Point(250, 27);
             this.txtbox_sqlUser.Name = "txtbox_sqlUser";
-            this.txtbox_sqlUser.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlUser.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlUser.TabIndex = 13;
             this.txtbox_sqlUser.Text = "sa";
             // 
             // lbl_sqlServer
             // 
-            this.lbl_sqlServer.AutoSize = true;
-            this.lbl_sqlServer.Location = new System.Drawing.Point(4, 24);
+            this.lbl_sqlServer.Location = new System.Drawing.Point(10, 9);
             this.lbl_sqlServer.Name = "lbl_sqlServer";
-            this.lbl_sqlServer.Size = new System.Drawing.Size(66, 15);
+            this.lbl_sqlServer.Size = new System.Drawing.Size(225, 15);
             this.lbl_sqlServer.TabIndex = 12;
             this.lbl_sqlServer.Text = "SQL Server:";
+            this.lbl_sqlServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtbox_sqlServer
             // 
-            this.txtbox_sqlServer.Location = new System.Drawing.Point(75, 18);
+            this.txtbox_sqlServer.Location = new System.Drawing.Point(10, 27);
             this.txtbox_sqlServer.Name = "txtbox_sqlServer";
-            this.txtbox_sqlServer.Size = new System.Drawing.Size(180, 23);
+            this.txtbox_sqlServer.Size = new System.Drawing.Size(225, 23);
             this.txtbox_sqlServer.TabIndex = 11;
             this.txtbox_sqlServer.Text = ".";
             // 
             // lbl_testConnStatus
             // 
-            this.lbl_testConnStatus.Location = new System.Drawing.Point(75, 66);
+            this.lbl_testConnStatus.Location = new System.Drawing.Point(10, 75);
             this.lbl_testConnStatus.Name = "lbl_testConnStatus";
-            this.lbl_testConnStatus.Size = new System.Drawing.Size(745, 15);
+            this.lbl_testConnStatus.Size = new System.Drawing.Size(1007, 15);
             this.lbl_testConnStatus.TabIndex = 22;
             this.lbl_testConnStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -278,7 +279,7 @@ namespace BulkImportDelimitedFlatFiles
             // chbox_windowsAuth
             // 
             this.chbox_windowsAuth.AutoSize = true;
-            this.chbox_windowsAuth.Location = new System.Drawing.Point(75, 44);
+            this.chbox_windowsAuth.Location = new System.Drawing.Point(11, 53);
             this.chbox_windowsAuth.Name = "chbox_windowsAuth";
             this.chbox_windowsAuth.Size = new System.Drawing.Size(157, 19);
             this.chbox_windowsAuth.TabIndex = 33;
@@ -662,6 +663,8 @@ namespace BulkImportDelimitedFlatFiles
             this.MinimumSize = new System.Drawing.Size(1200, 500);
             this.Name = "frm_Main";
             this.Text = "Import Flat Files in Bulk";
+            this.ResizeEnd += new System.EventHandler(this.frm_Main_ResizeEnd);
+            this.Resize += new System.EventHandler(this.frm_Main_Resize);
             this.sc_Main.Panel1.ResumeLayout(false);
             this.sc_Main.Panel1.PerformLayout();
             this.sc_Main.Panel2.ResumeLayout(false);
